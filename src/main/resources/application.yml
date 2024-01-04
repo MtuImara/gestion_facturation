@@ -1,1 +1,21 @@
-
+server:
+  port: 8085
+  servlet:
+    contextPath: /facturation/api
+spring:
+  application:
+    name: GESTION-FACTURATION
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost/gestion_facturation
+    username: root
+    password:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+      dialect: org.hibernate.dialect.MySQL5Dialect
+  main:
+    allow-circular-references: true
