@@ -56,6 +56,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -74,5 +79,18 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>kaczmarzyk.net</id>
+			<name>kaczmarzyk.net repository</name>
+			<url>ftp://repo.kaczmarzyk.net</url>
+		</repository>
+		<snapshotRepository>
+			<id>kaczmarzyk.net</id>
+			<name>kaczmarzyk.net repository</name>
+			<url>ftp://repo.kaczmarzyk.net</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 </project>
