@@ -34,7 +34,7 @@ public class ServiceEntity implements Serializable {
     @Column(name = "code", unique = true, nullable = false)
     private String code;
 
-    @Column(name = "designation", length = 100, nullable = false)
+    @Column(name = "designation")
     private String designation;
 
     @Column(name = "commentaire", nullable = true)

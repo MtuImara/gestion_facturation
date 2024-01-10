@@ -2,7 +2,6 @@ package backend.rest_api.gestion_facturation.gestionServices.mapper;
 
 import org.springframework.stereotype.Component;
 
-import backend.rest_api.gestion_facturation.gestionServices.dto.ServiceDTO;
 import backend.rest_api.gestion_facturation.gestionServices.dto.ServiceDetailDTO;
 import backend.rest_api.gestion_facturation.gestionServices.entity.ServiceDetailEntity;
 

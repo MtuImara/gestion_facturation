@@ -48,6 +48,12 @@ public class Constante {
             public String toString() {
                 return "Desactivé(e)";
             }
+        },
+        ACCEPTER {
+            @Override
+            public String toString() {
+                return "Accepté(e)";
+            }
         }
 
     }

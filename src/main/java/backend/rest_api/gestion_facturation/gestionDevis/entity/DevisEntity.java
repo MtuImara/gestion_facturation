@@ -1,10 +1,15 @@
 package backend.rest_api.gestion_facturation.gestionDevis.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import backend.rest_api.gestion_facturation.gestionClient.entity.ClientEntity;
+import backend.rest_api.gestion_facturation.gestionServices.entity.ServiceEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,12 +49,36 @@ public class DevisEntity implements Serializable {
     @Column(name = "denomination_client")
     private String denominationClient;
 
+    @Column(name = "commentaire", nullable = true)
+    private String commentaire;
+
+    @Column(name = "type_statut", length = 11)
+    private Integer typeStatut;
+
+    @Column(name = "date_operation")
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    private Date dateOperation;
+
     @Column(name = "id_client", nullable = true)
     private Long idClient;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinColumn(name = "id_client", referencedColumnName = "id", insertable = false, updatable = false, nullable = false)
-    private ClientEntity service;
+    private ClientEntity client;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "devis")
+    private List<DevisDetailEntity> devisDetail;
+
+    @Column(name = "date_creation")
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    private Date dateCreation;
+
+    @Column(name = "date_modification")
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    private Date dateModification;
+
+    @Column(name = "utilisateur_creation")
+    private String idUtilisateurCreation;
 
 }
