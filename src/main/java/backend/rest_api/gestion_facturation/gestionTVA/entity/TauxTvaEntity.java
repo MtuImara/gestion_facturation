@@ -27,7 +27,7 @@ public class TauxTva {
     @Column(name = "code", length = 50, unique = true)
     private String code;
 
-    @Column(name = "libelle", length = 100)
+    @Column(name = "libelle")
     private String libelle;
 
     @Column(name = "taux")
