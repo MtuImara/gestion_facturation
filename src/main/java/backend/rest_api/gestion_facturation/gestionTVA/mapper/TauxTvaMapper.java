@@ -1,7 +1,7 @@
 package backend.rest_api.gestion_facturation.gestionTVA.mapper;
 
 import backend.rest_api.gestion_facturation.gestionTVA.dto.TauxTvaDto;
-import backend.rest_api.gestion_facturation.gestionTVA.entity.TauxTva;
+import backend.rest_api.gestion_facturation.gestionTVA.entity.TauxTvaEntity;
 
 public class TauxTvaMapper {
 
@@ -11,9 +11,9 @@ public class TauxTvaMapper {
     return new TauxTvaMapper();
   }
 
-  public TauxTva toEntity(TauxTvaDto dto){
+  public TauxTvaEntity toEntity(TauxTvaDto dto){
 
-    TauxTva entity = new TauxTva();
+    TauxTvaEntity entity = new TauxTvaEntity();
     entity.setId(dto.getId());
     entity.setCode(dto.getCode());
     entity.setLibelle(dto.getLibelle());
@@ -22,7 +22,7 @@ public class TauxTvaMapper {
     return entity;
   }
 
-  public TauxTvaDto toDto(TauxTva entity){
+  public TauxTvaDto toDto(TauxTvaEntity entity){
     TauxTvaDto dto = new TauxTvaDto();
 
     dto.setId(entity.getId());

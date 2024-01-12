@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import backend.rest_api.gestion_facturation.gestionTVA.dto.TauxTvaDto;
-import backend.rest_api.gestion_facturation.gestionTVA.entity.TauxTva;
+import backend.rest_api.gestion_facturation.gestionTVA.entity.TauxTvaEntity;
 import backend.rest_api.gestion_facturation.gestionTVA.repository.TauxTvaRepository;
 import backend.rest_api.gestion_facturation.gestionTVA.service.TauxTvaServices;
 import backend.rest_api.gestion_facturation.helpers.MessageHelper;
@@ -88,7 +88,7 @@ public class TauxTvaController {
 
   @PutMapping("/{id}")
   public ResponseEntity<Object> update(@PathVariable("id") Long id, @RequestBody TauxTvaDto dto) throws Exception {
-    Optional<TauxTva> codeExist = tauxTvaRepository.verificationCode(id, dto.getCode());
+    Optional<TauxTvaEntity> codeExist = tauxTvaRepository.verificationCode(id, dto.getCode());
     if (codeExist.isPresent())
       return new ResponseEntity<>(new ResponseHelper(("code " + dto.getCode() + " exist"), true),
               HttpStatus.BAD_REQUEST);

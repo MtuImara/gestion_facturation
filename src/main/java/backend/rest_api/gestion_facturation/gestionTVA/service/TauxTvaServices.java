@@ -1,7 +1,7 @@
 package backend.rest_api.gestion_facturation.gestionTVA.service;
 
 import backend.rest_api.gestion_facturation.gestionTVA.dto.TauxTvaDto;
-import backend.rest_api.gestion_facturation.gestionTVA.entity.TauxTva;
+import backend.rest_api.gestion_facturation.gestionTVA.entity.TauxTvaEntity;
 import backend.rest_api.gestion_facturation.gestionTVA.mapper.TauxTvaMapper;
 import backend.rest_api.gestion_facturation.gestionTVA.repository.TauxTvaRepository;
 import backend.rest_api.gestion_facturation.helpers.MessageHelper;
@@ -23,7 +23,7 @@ public class TauxTvaServices {
 
   public TauxTvaDto getById(Long id) {
     TauxTvaDto tauxTvaDto = null;
-    TauxTva tauxTva = null;
+    TauxTvaEntity tauxTva = null;
     try {
       tauxTva = tauxTvaRepository.findById(id).
               orElseThrow(()->new IllegalArgumentException(MessageHelper.dataExist(""+id)));
@@ -40,9 +40,9 @@ public class TauxTvaServices {
 
     TauxTvaDto tauxTvaDto = null;
     List<TauxTvaDto> tauxTvaDtos = new ArrayList<>();
-    List<TauxTva> tauxTvaEntities = tauxTvaRepository.findAll();
+    List<TauxTvaEntity> tauxTvaEntities = tauxTvaRepository.findAll();
     try {
-      for (TauxTva entity : tauxTvaEntities) {
+      for (TauxTvaEntity entity : tauxTvaEntities) {
         tauxTvaDto = TauxTvaMapper.getInstance().toDto(entity);        
         tauxTvaDtos.add(tauxTvaDto);
       }
@@ -53,9 +53,9 @@ public class TauxTvaServices {
   }
   public TauxTvaDto create(TauxTvaDto dto) {
     try {
-      TauxTva tauxEntity = TauxTvaMapper.getInstance()
+      TauxTvaEntity tauxEntity = TauxTvaMapper.getInstance()
               .toEntity(dto);
-      TauxTva fromBd = tauxTvaRepository.save(tauxEntity);
+      TauxTvaEntity fromBd = tauxTvaRepository.save(tauxEntity);
       TauxTvaDto tauxTvaDto = TauxTvaMapper.getInstance().toDto(fromBd);
     } catch (Exception e) {
       dto = null;
@@ -68,13 +68,13 @@ public class TauxTvaServices {
 
   public TauxTvaDto update(Long id, TauxTvaDto dto) {
 
-    TauxTva tauxTva = null;
+    TauxTvaEntity tauxTva = null;
     try {
       tauxTva = tauxTvaRepository.findById(id).
               orElseThrow(()->new IllegalArgumentException(MessageHelper.dataExist(""+id)));
       dto.setId(tauxTva.getId());
       tauxTva = TauxTvaMapper.getInstance().toEntity(dto);
-      TauxTva updated = tauxTvaRepository.save(tauxTva);
+      TauxTvaEntity updated = tauxTvaRepository.save(tauxTva);
       dto = TauxTvaMapper.getInstance().toDto(updated);
     } catch (Exception e) {
       dto = null;
@@ -99,7 +99,7 @@ public class TauxTvaServices {
   public List<TauxTvaDto> filtrage(String code, String libelle, Double taux, Long typeTva){
     TauxTvaDto dto = null;
     List<TauxTvaDto> listDto = new ArrayList<>();
-    List<TauxTva> listEntities = new ArrayList<>();
+    List<TauxTvaEntity> listEntities = new ArrayList<>();
     try {
       if (code != null && libelle == null && taux == null && typeTva == null)
         listEntities = tauxTvaRepository.findByCodeContainingKeywordAnywhere(code);
@@ -111,7 +111,7 @@ public class TauxTvaServices {
         listEntities = tauxTvaRepository.findByTypeTvaContainingKeywordAnywhere(typeTva);
       else if(code == null && libelle == null && taux == null && typeTva == null)
         listEntities = tauxTvaRepository.findAll();
-      for(TauxTva en : listEntities) {
+      for(TauxTvaEntity en : listEntities) {
         dto = TauxTvaMapper.getInstance().toDto(en);
         listDto.add(dto);
       }
@@ -124,12 +124,12 @@ public class TauxTvaServices {
 
 
   public List<TauxTvaDto> search(String statut){
-    List<TauxTva> entities = tauxTvaRepository.search(statut);
+    List<TauxTvaEntity> entities = tauxTvaRepository.search(statut);
     List<TauxTvaDto> tvaDtos = new ArrayList<>();
     TauxTvaDto dto = null;
     try {
       if (statut != null) {
-        for(TauxTva en : entities) {
+        for(TauxTvaEntity en : entities) {
           dto = TauxTvaMapper.getInstance().toDto(en);
           
           tvaDtos.add(dto);

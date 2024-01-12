@@ -17,7 +17,7 @@ import jakarta.persistence.Table;
 @ToString
 @Entity
 @Table(name = "tbl_taux_tvas")
-public class TauxTva {
+public class TauxTvaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
