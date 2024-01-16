@@ -9,15 +9,16 @@ import backend.rest_api.gestion_facturation.gestionTVA.entity.TauxTvaEntity;
 
 import java.util.List;
 import java.util.Optional;
+
 @Repository
 public interface TauxTvaRepository extends JpaRepository<TauxTvaEntity, Long> {
 
-  @Query("SELECT count(t) > 0 FROM TauxTva t  WHERE t.code = :code")
+  @Query("SELECT count(t) > 0 FROM TauxTvaEntity t  WHERE t.code = :code")
   boolean existsByCode(@Param("code") String code);
 
-  @Query(value = "SELECT * FROM tbl_taux_tvas T WHERE T.code=:code and T.id!=:id",nativeQuery = true)
+  @Query(value = "SELECT * FROM tbl_taux_tvas T WHERE T.code=:code and T.id!=:id", nativeQuery = true)
   Optional<TauxTvaEntity> verificationCode(@Param("id") Long id,
-                                     @Param("code") String code);
+      @Param("code") String code);
 
   @Query(value = "SELECT * FROM tbl_taux_tvas t  WHERE t.code LIKE  %?1%", nativeQuery = true)
   List<TauxTvaEntity> findByCodeContainingKeywordAnywhere(@Param("code") String code);
@@ -32,6 +33,6 @@ public interface TauxTvaRepository extends JpaRepository<TauxTvaEntity, Long> {
   List<TauxTvaEntity> findByTypeTvaContainingKeywordAnywhere(@Param("typeTva") Long typeTva);
 
   @Query(value = "SELECT * FROM tbl_taux_tvas p WHERE p.code LIKE %?1%"
-          + " OR p.libelle LIKE %?1%", nativeQuery = true)
+      + " OR p.libelle LIKE %?1%", nativeQuery = true)
   List<TauxTvaEntity> search(String statut);
 }

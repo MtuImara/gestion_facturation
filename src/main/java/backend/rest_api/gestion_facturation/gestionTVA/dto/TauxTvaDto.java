@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 public class TauxTvaDto {
 
   private Long id;
-  private Integer idCompteComptable;
   private String code;
   private String libelle;
   private Double taux;

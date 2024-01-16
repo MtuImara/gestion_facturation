@@ -43,12 +43,12 @@ public class ClientController {
             @RequestParam(defaultValue = "id,desc") String[] sort,
             @Or({
                     @Spec(path = "code", params = "name", spec = LikeIgnoreCase.class),
-                    @Spec(path = "designation", params = "name", spec = LikeIgnoreCase.class) }) Specification<ClientEntity> specClient) {
+                    @Spec(path = "nom", params = "name", spec = LikeIgnoreCase.class) }) Specification<ClientEntity> specClient) {
 
-        Map<String, Object> articles = clientService.getAll(title, page - 1, size, sort, specClient);
+        Map<String, Object> client = clientService.getAll(title, page - 1, size, sort, specClient);
 
-        if (articles.size() > 0) {
-            return new ResponseEntity<>(new ResponseHelper(MessageHelper.success(), articles, true),
+        if (client.size() > 0) {
+            return new ResponseEntity<>(new ResponseHelper(MessageHelper.success(), client, true),
                     HttpStatus.OK);
 
         } else {

@@ -109,12 +109,13 @@ public class DevisMapper {
         }
         if (entity.getClient().getAssujettiTva() == true) {
             dto.setTauxTva(entity.getTauxTva());
-        }else{
+        } else {
             dto.setTauxTva(null);
         }
-        if(entity.getClient() != null && entity.getClient().getAssujettiTva() == true){
-            dto.setMontantTotalTTC(new BigDecimal((dto.getTauxTva() * devisDetailRepository.montantTotalDevisHT(dto.getId()))/100));
-        }else{
+        if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
+            dto.setMontantTotalTTC(
+                    new BigDecimal((dto.getTauxTva() * devisDetailRepository.montantTotalDevisHT(dto.getId())) / 100));
+        } else {
             dto.setMontantTotalHT(new BigDecimal(devisDetailRepository.montantTotalDevisHT(dto.getId())));
         }
 
