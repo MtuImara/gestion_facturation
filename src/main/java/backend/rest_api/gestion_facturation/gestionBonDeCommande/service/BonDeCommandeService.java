@@ -1,4 +1,4 @@
-package backend.rest_api.gestion_facturation.gestionDevis.service;
+package backend.rest_api.gestion_facturation.gestionBonDeCommande.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -13,15 +13,15 @@ import org.springframework.stereotype.Service;
 
 import backend.rest_api.gestion_facturation.constantes.StaticListOfValues;
 import backend.rest_api.gestion_facturation.constantes.StaticValue;
+import backend.rest_api.gestion_facturation.gestionBonDeCommande.dto.BonDeCommandeDTO;
+import backend.rest_api.gestion_facturation.gestionBonDeCommande.dto.BonDeCommandeDetailDTO;
+import backend.rest_api.gestion_facturation.gestionBonDeCommande.entity.BonDeCommandeDetailEntity;
+import backend.rest_api.gestion_facturation.gestionBonDeCommande.entity.BonDeCommandeEntity;
+import backend.rest_api.gestion_facturation.gestionBonDeCommande.mapper.BonDeCommandeDetailMapper;
+import backend.rest_api.gestion_facturation.gestionBonDeCommande.mapper.BonDeCommandeMapper;
+import backend.rest_api.gestion_facturation.gestionBonDeCommande.repository.BonDeCommandeDetailRepository;
+import backend.rest_api.gestion_facturation.gestionBonDeCommande.repository.BonDeCommandeRepository;
 import backend.rest_api.gestion_facturation.gestionClient.mapper.ClientMapper;
-import backend.rest_api.gestion_facturation.gestionDevis.dto.DevisDTO;
-import backend.rest_api.gestion_facturation.gestionDevis.dto.DevisDetailDTO;
-import backend.rest_api.gestion_facturation.gestionDevis.entity.DevisDetailEntity;
-import backend.rest_api.gestion_facturation.gestionDevis.entity.DevisEntity;
-import backend.rest_api.gestion_facturation.gestionDevis.mapper.DevisDetailMapper;
-import backend.rest_api.gestion_facturation.gestionDevis.mapper.DevisMapper;
-import backend.rest_api.gestion_facturation.gestionDevis.repository.DevisDetailRepository;
-import backend.rest_api.gestion_facturation.gestionDevis.repository.DevisRepository;
 import backend.rest_api.gestion_facturation.gestionServices.mapper.ServiceMapper;
 import backend.rest_api.gestion_facturation.helpers.DateHelper;
 import backend.rest_api.gestion_facturation.helpers.PagingAndSortingHelper;
@@ -29,10 +29,10 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class DevisService {
+public class BonDeCommandeService {
 
-        private final DevisRepository devisRepository;
-        private final DevisDetailRepository devisDetailRepository;
+        private final BonDeCommandeRepository bonDeCommandeRepository;
+        private final BonDeCommandeDetailRepository bonDeCommandeDetailRepository;
 
         public List<StaticValue> typeStatut() {
 
@@ -42,9 +42,9 @@ public class DevisService {
                 return list_of_values;
         }
 
-        public DevisDetailDTO devisDetailConvertToDto(DevisDetailEntity entity) {
+        public BonDeCommandeDetailDTO bonDeCommandeDetailConvertToDto(BonDeCommandeDetailEntity entity) {
 
-                DevisDetailDTO dto = new DevisDetailDTO();
+                BonDeCommandeDetailDTO dto = new BonDeCommandeDetailDTO();
 
                 dto.setId(entity.getId());
                 if (entity.getService() != null) {
@@ -61,23 +61,23 @@ public class DevisService {
 
         }
 
-        public Map<String, Object> getAll(String title, int page, int size, String[] sort,
-                        Specification<DevisEntity> spec) {
+        public Map<String, Object> getBonDeCommandeAll(String title, int page, int size, String[] sort,
+                        Specification<BonDeCommandeEntity> spec) {
 
                 Pageable pagingSort = PagingAndSortingHelper.pagination(sort, page, size);
 
-                Page<DevisEntity> devisEntity = null;
+                Page<BonDeCommandeEntity> bonDeCommandeEntity = null;
 
                 if (title == null || title.equals("")) {
-                        devisEntity = devisRepository.findAll(spec, pagingSort);
+                        bonDeCommandeEntity = bonDeCommandeRepository.findAll(spec, pagingSort);
                 } else {
                 }
 
-                List<DevisDTO> dtos = new ArrayList<>();
+                List<BonDeCommandeDTO> dtos = new ArrayList<>();
 
-                devisEntity.forEach(entity -> {
+                bonDeCommandeEntity.forEach(entity -> {
 
-                        DevisDTO dto = new DevisDTO();
+                        BonDeCommandeDTO dto = new BonDeCommandeDTO();
 
                         StaticValue staticValStatut = new StaticValue();
                         StaticListOfValues listOfValuesStatut = new StaticListOfValues();
@@ -100,11 +100,12 @@ public class DevisService {
                         // if (entity.getClient() != null) {
                         // dto.setClient(ClientMapper.getInstance().convertToDto(entity.getClient()));
                         // }
-                        if (entity.getDevisDetail() != null) {
-                                dto.setDevisDetail(entity.getDevisDetail().stream().map(this::devisDetailConvertToDto)
+                        if (entity.getBonDeCommandeDetail() != null) {
+                                dto.setBonDeCommandeDetail(entity.getBonDeCommandeDetail().stream()
+                                                .map(this::bonDeCommandeDetailConvertToDto)
                                                 .collect(Collectors.toList()));
                         } else {
-                                dto.setDevisDetail(null);
+                                dto.setBonDeCommandeDetail(null);
                         }
                         if (entity.getClient().getAssujettiTva() == true) {
                                 dto.setTauxTva(entity.getTauxTva());
@@ -113,11 +114,12 @@ public class DevisService {
                         }
                         if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
                                 dto.setMontantTotalTTC(
-                                                new BigDecimal((dto.getTauxTva() * devisDetailRepository
-                                                                .montantTotalDevisHT(dto.getId())) / 100));
+                                                new BigDecimal((dto.getTauxTva() * bonDeCommandeDetailRepository
+                                                                .montantTotalBonDeCommandeHT(dto.getId())) / 100));
                         } else {
                                 dto.setMontantTotalHT(
-                                                new BigDecimal(devisDetailRepository.montantTotalDevisHT(dto.getId())));
+                                                new BigDecimal(bonDeCommandeDetailRepository
+                                                                .montantTotalBonDeCommandeHT(dto.getId())));
                         }
 
                         dtos.add(dto);
@@ -125,21 +127,21 @@ public class DevisService {
                 });
 
                 Map<String, Object> data = PagingAndSortingHelper.filteredAndSortedResult(
-                                devisEntity.getNumber(),
-                                devisEntity.getTotalElements(),
-                                devisEntity.getTotalPages(),
+                                bonDeCommandeEntity.getNumber(),
+                                bonDeCommandeEntity.getTotalElements(),
+                                bonDeCommandeEntity.getTotalPages(),
                                 dtos);
 
                 return data;
         }
 
-        public DevisDTO getById(Long id) {
+        public BonDeCommandeDTO getById(Long id) {
 
-                DevisEntity entity = null;
+                BonDeCommandeEntity entity = null;
                 try {
-                        entity = devisRepository.getReferenceById(id);
+                        entity = bonDeCommandeRepository.getReferenceById(id);
 
-                        DevisDTO dto = new DevisDTO();
+                        BonDeCommandeDTO dto = new BonDeCommandeDTO();
 
                         StaticValue staticValStatut = new StaticValue();
                         StaticListOfValues listOfValuesStatut = new StaticListOfValues();
@@ -162,11 +164,12 @@ public class DevisService {
                         if (entity.getClient() != null) {
                                 dto.setClient(ClientMapper.getInstance().convertToDto(entity.getClient()));
                         }
-                        if (entity.getDevisDetail() != null) {
-                                dto.setDevisDetail(entity.getDevisDetail().stream().map(this::devisDetailConvertToDto)
+                        if (entity.getBonDeCommandeDetail() != null) {
+                                dto.setBonDeCommandeDetail(entity.getBonDeCommandeDetail().stream()
+                                                .map(this::bonDeCommandeDetailConvertToDto)
                                                 .collect(Collectors.toList()));
                         } else {
-                                dto.setDevisDetail(null);
+                                dto.setBonDeCommandeDetail(null);
                         }
                         if (entity.getClient().getAssujettiTva() == true) {
                                 dto.setTauxTva(entity.getTauxTva());
@@ -175,11 +178,12 @@ public class DevisService {
                         }
                         if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
                                 dto.setMontantTotalTTC(
-                                                new BigDecimal((dto.getTauxTva() * devisDetailRepository
-                                                                .montantTotalDevisHT(dto.getId())) / 100));
+                                                new BigDecimal((dto.getTauxTva() * bonDeCommandeDetailRepository
+                                                                .montantTotalBonDeCommandeHT(dto.getId())) / 100));
                         } else {
                                 dto.setMontantTotalHT(
-                                                new BigDecimal(devisDetailRepository.montantTotalDevisHT(dto.getId())));
+                                                new BigDecimal(bonDeCommandeDetailRepository
+                                                                .montantTotalBonDeCommandeHT(dto.getId())));
                         }
                         return dto;
 
@@ -189,30 +193,30 @@ public class DevisService {
                 }
         }
 
-        public DevisDTO ajoutDevisService(DevisDTO dto) {
+        public BonDeCommandeDTO ajoutBonDeCommandeService(BonDeCommandeDTO dto) {
 
                 try {
-                        DevisEntity entity = new DevisEntity();
-                        entity = DevisMapper.getInstance()
+                        BonDeCommandeEntity entity = new BonDeCommandeEntity();
+                        entity = BonDeCommandeMapper.getInstance()
                                         .convertToEntity(dto);
 
-                        DevisEntity creation = devisRepository.save(entity);
+                        BonDeCommandeEntity creation = bonDeCommandeRepository.save(entity);
 
-                        /* Enregistrement automatique des détails du Devis */
+                        /* Enregistrement automatique des détails du Bon De Commande */
 
-                        List<DevisDetailDTO> services_details = dto.getDevisDetail();
+                        List<BonDeCommandeDetailDTO> services_details = dto.getBonDeCommandeDetail();
 
-                        for (DevisDetailDTO service_detail : services_details) {
+                        for (BonDeCommandeDetailDTO service_detail : services_details) {
 
-                                DevisDetailEntity detailEntity = DevisDetailMapper.getInstance()
+                                BonDeCommandeDetailEntity detailEntity = BonDeCommandeDetailMapper.getInstance()
                                                 .convertToEntity(service_detail);
 
                                 detailEntity.setIdService(entity.getId());
 
-                                devisDetailRepository.save(detailEntity);
+                                bonDeCommandeDetailRepository.save(detailEntity);
                         }
 
-                        /* Fin Enregistrement automatique des détails du Devis */
+                        /* Fin Enregistrement automatique des détails du Bon De Commande */
 
                         dto = creation != null
                                         ? getById(dto.getId())
@@ -225,29 +229,29 @@ public class DevisService {
                 return dto;
         }
 
-        public DevisDTO modificationDevisService(Long id,
-                        DevisDTO updated) {
-                DevisEntity converted_Entity, updated_Entity = null;
+        public BonDeCommandeDTO modificationBonDeCommandeService(Long id,
+                        BonDeCommandeDTO updated) {
+                BonDeCommandeEntity converted_Entity, updated_Entity = null;
                 try {
 
-                        DevisDTO getById = getById(id);
-                        converted_Entity = DevisMapper.getInstance()
+                        BonDeCommandeDTO getById = getById(id);
+                        converted_Entity = BonDeCommandeMapper.getInstance()
                                         .convertToEntity(getById.modifyValues(updated));
 
-                        updated_Entity = devisRepository.save(converted_Entity);
+                        updated_Entity = bonDeCommandeRepository.save(converted_Entity);
 
-                        /* modification automatique des détails du Devis */
+                        /* modification automatique des détails du Bon De Commande */
 
-                        List<DevisDetailDTO> services_details = updated.getDevisDetail();
+                        List<BonDeCommandeDetailDTO> services_details = updated.getBonDeCommandeDetail();
 
-                        for (DevisDetailDTO service_detail : services_details) {
+                        for (BonDeCommandeDetailDTO service_detail : services_details) {
 
-                                DevisDetailEntity rfd = DevisDetailMapper.getInstance()
+                                BonDeCommandeDetailEntity rfd = BonDeCommandeDetailMapper.getInstance()
                                                 .convertToEntity(service_detail);
 
                                 rfd.setIdService(updated_Entity.getId());
 
-                                devisDetailRepository.save(rfd);
+                                bonDeCommandeDetailRepository.save(rfd);
                         }
 
                         /* Fin modificatio automatique des détails du service */
