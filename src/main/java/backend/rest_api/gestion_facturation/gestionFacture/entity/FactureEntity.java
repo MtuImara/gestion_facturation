@@ -59,6 +59,10 @@ public class FactureEntity implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date dateOperation;
 
+    @Column(name = "date_echeance")
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    private Date dateEcheance;
+
     @Column(name = "id_client", nullable = true)
     private Long idClient;
 

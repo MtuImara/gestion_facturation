@@ -25,7 +25,6 @@ public class TauxTvaController {
   @Autowired
   private TauxTvaRepository tauxTvaRepository;
 
-
   @GetMapping("/")
   public ResponseEntity<Object> getAll(@RequestParam(name = "statut", required = false) String statut) {
 
@@ -38,12 +37,12 @@ public class TauxTvaController {
         else {
           return new ResponseEntity<>(new ResponseHelper(null, tauxTvaDts, true), HttpStatus.OK);
         }
-      }else {
+      } else {
         return new ResponseEntity<>(new ResponseHelper(MessageHelper.noContent()), HttpStatus.NO_CONTENT);
       }
     } catch (Exception e) {
       return new ResponseEntity<>(new ResponseHelper(MessageHelper.internalServer(), false),
-              HttpStatus.INTERNAL_SERVER_ERROR);
+          HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
   }
@@ -58,6 +57,7 @@ public class TauxTvaController {
     }
 
   }
+
   @DeleteMapping(value = "/{id}")
   public ResponseEntity<Object> deleteById(@PathVariable(name = "id", required = true) Long id) {
 
@@ -67,13 +67,14 @@ public class TauxTvaController {
       return new ResponseEntity<>(new ResponseHelper(MessageHelper.noContent()), HttpStatus.NO_CONTENT);
     }
   }
+
   @PostMapping(value = "/")
-  public ResponseEntity<Object> create(@RequestBody TauxTvaDto dto){
+  public ResponseEntity<Object> create(@RequestBody TauxTvaDto dto) {
 
     try {
       if (tauxTvaRepository.existsByCode(dto.getCode()))
         return new ResponseEntity<>(new ResponseHelper(MessageHelper.dataExist("code"), false),
-                HttpStatus.BAD_REQUEST);
+            HttpStatus.BAD_REQUEST);
       TauxTvaDto tauxTvadto = tauxTvaService.create(dto);
       if (tauxTvadto != null) {
         return new ResponseEntity<>(new ResponseHelper(tauxTvadto, true), HttpStatus.OK);
@@ -82,7 +83,7 @@ public class TauxTvaController {
       }
     } catch (Exception e) {
       return new ResponseEntity<>(new ResponseHelper(MessageHelper.internalServer(e.getMessage())),
-              HttpStatus.INTERNAL_SERVER_ERROR);
+          HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -91,28 +92,28 @@ public class TauxTvaController {
     Optional<TauxTvaEntity> codeExist = tauxTvaRepository.verificationCode(id, dto.getCode());
     if (codeExist.isPresent())
       return new ResponseEntity<>(new ResponseHelper(("code " + dto.getCode() + " exist"), true),
-              HttpStatus.BAD_REQUEST);
+          HttpStatus.BAD_REQUEST);
     try {
       TauxTvaDto tauxTvaDto = tauxTvaService.update(id, dto);
 
       if (tauxTvaDto != null) {
         return new ResponseEntity<>(new ResponseHelper(MessageHelper.updatedSuccessFully(), tauxTvaDto, true),
-                HttpStatus.OK);
+            HttpStatus.OK);
       } else {
         return new ResponseEntity<>(new ResponseHelper(MessageHelper.noContent()), HttpStatus.NO_CONTENT);
       }
     } catch (Exception e) {
       return new ResponseEntity<>(new ResponseHelper(MessageHelper.dataExist(e.getMessage())),
-              HttpStatus.INTERNAL_SERVER_ERROR);
+          HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
   }
 
   @GetMapping("/filtrage")
   public ResponseEntity<Object> getFiltrage(@RequestParam(name = "code", required = false) String code,
-                                       @RequestParam(name = "libelle", required = false) String libelle,
-                                       @RequestParam(name = "taux", required = false) Double taux,
-                                       @RequestParam(name = "typeTva", required = false) Long typeTva) {
+      @RequestParam(name = "libelle", required = false) String libelle,
+      @RequestParam(name = "taux", required = false) Double taux,
+      @RequestParam(name = "typeTva", required = false) Long typeTva) {
     List<TauxTvaDto> listDtos = tauxTvaService.filtrage(code, libelle, taux, typeTva);
     if (listDtos != null)
       return new ResponseEntity<>(new ResponseHelper(null, listDtos, true), HttpStatus.OK);

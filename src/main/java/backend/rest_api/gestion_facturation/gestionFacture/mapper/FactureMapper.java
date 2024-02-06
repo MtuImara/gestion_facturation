@@ -43,6 +43,7 @@ public class FactureMapper {
             entity.setTypeStatut(Integer.parseInt(dto.getTypeStatut().getKey()));
         }
         entity.setDateOperation(DateHelper.toDate(dto.getDateOperation()));
+        entity.setDateEcheance(DateHelper.toDate(dto.getDateEcheance()));
         entity.setDateCreation(DateHelper.toDate(dto.getDateCreation()));
         entity.setDateModification(DateHelper.toDate(dto.getDateModification()));
         if (dto.getClient() != null) {
@@ -96,6 +97,7 @@ public class FactureMapper {
         dto.setCommentaire(entity.getCommentaire());
         dto.setTypeStatut(staticValStatut);
         dto.setDateOperation(DateHelper.toText(entity.getDateOperation(), "time"));
+        dto.setDateEcheance(DateHelper.toText(entity.getDateEcheance(), "time"));
         dto.setDateCreation(DateHelper.toText(entity.getDateCreation(), "time"));
         dto.setDateModification(DateHelper.toText(entity.getDateModification(), "time"));
         if (entity.getClient() != null) {

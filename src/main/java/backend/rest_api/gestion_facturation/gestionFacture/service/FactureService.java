@@ -95,6 +95,7 @@ public class FactureService {
             dto.setCommentaire(entity.getCommentaire());
             dto.setTypeStatut(staticValStatut);
             dto.setDateOperation(DateHelper.toText(entity.getDateOperation(), "time"));
+            dto.setDateEcheance(DateHelper.toText(entity.getDateEcheance(), "time"));
             dto.setDateCreation(DateHelper.toText(entity.getDateCreation(), "time"));
             dto.setDateModification(DateHelper.toText(entity.getDateModification(), "time"));
             // if (entity.getClient() != null) {
@@ -157,6 +158,7 @@ public class FactureService {
             dto.setCommentaire(entity.getCommentaire());
             dto.setTypeStatut(staticValStatut);
             dto.setDateOperation(DateHelper.toText(entity.getDateOperation(), "time"));
+            dto.setDateEcheance(DateHelper.toText(entity.getDateEcheance(), "time"));
             dto.setDateCreation(DateHelper.toText(entity.getDateCreation(), "time"));
             dto.setDateModification(DateHelper.toText(entity.getDateModification(), "time"));
             if (entity.getClient() != null) {
