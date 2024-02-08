@@ -112,12 +112,17 @@ public class DevisService {
                                 dto.setTauxTva(null);
                         }
                         if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
+                                dto.setMontantTotalHT(new BigDecimal(0.0));
                                 dto.setMontantTotalTTC(
-                                                new BigDecimal((dto.getTauxTva() * devisDetailRepository
-                                                                .montantTotalDevisHT(dto.getId())) / 100));
+                                                new BigDecimal(devisDetailRepository
+                                                                .montantTotalDevisHT(dto.getId())
+                                                                + ((dto.getTauxTva() * devisDetailRepository
+                                                                                .montantTotalDevisHT(dto.getId()))
+                                                                                / 100)));
                         } else {
                                 dto.setMontantTotalHT(
                                                 new BigDecimal(devisDetailRepository.montantTotalDevisHT(dto.getId())));
+                                dto.setMontantTotalTTC(new BigDecimal(0.0));
                         }
 
                         dtos.add(dto);
@@ -174,12 +179,17 @@ public class DevisService {
                                 dto.setTauxTva(null);
                         }
                         if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
+                                dto.setMontantTotalHT(new BigDecimal(0.0));
                                 dto.setMontantTotalTTC(
-                                                new BigDecimal((dto.getTauxTva() * devisDetailRepository
-                                                                .montantTotalDevisHT(dto.getId())) / 100));
+                                                new BigDecimal(devisDetailRepository
+                                                                .montantTotalDevisHT(dto.getId())
+                                                                + ((dto.getTauxTva() * devisDetailRepository
+                                                                                .montantTotalDevisHT(dto.getId()))
+                                                                                / 100)));
                         } else {
                                 dto.setMontantTotalHT(
                                                 new BigDecimal(devisDetailRepository.montantTotalDevisHT(dto.getId())));
+                                dto.setMontantTotalTTC(new BigDecimal(0.0));
                         }
                         return dto;
 
