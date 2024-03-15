@@ -37,11 +37,13 @@ public class DevisMapper {
         entity.setId(dto.getId());
         entity.setCode(dto.getCode());
         entity.setReference(dto.getReference());
-        entity.setDenominationClient(dto.getDenominationClient());
-        entity.setCommentaire(dto.getCommentaire());
-        if (dto.getTypeStatut() != null) {
-            entity.setTypeStatut(Integer.parseInt(dto.getTypeStatut().getKey()));
+        if (dto.getClient() != null) {
+            entity.setDenominationClient(dto.getClient().getNom());
         }
+        entity.setCommentaire(dto.getCommentaire());
+        // if (dto.getTypeStatut() != null) {
+        //     entity.setTypeStatut(Integer.parseInt(dto.getTypeStatut().getKey()));
+        // }
         entity.setDateOperation(DateHelper.toDate(dto.getDateOperation()));
         entity.setDateCreation(DateHelper.toDate(dto.getDateCreation()));
         entity.setDateModification(DateHelper.toDate(dto.getDateModification()));
@@ -51,9 +53,42 @@ public class DevisMapper {
         if (dto.getTva() != null) {
             entity.setIdTva(dto.getTva().getId());
         }
-        if (dto.getClient().getAssujettiTva() == true) {
-            entity.setTauxTva(dto.getTva().getTaux());
+        // if (dto.getClient().getAssujettiTva() == true) {
+        //     entity.setTauxTva(dto.getTva().getTaux());
+        // }
+
+        return entity;
+    }
+
+    public DevisEntity toEntity(DevisDTO dto) {
+
+        DevisEntity entity = new DevisEntity();
+
+        entity.setId(dto.getId());
+        entity.setCode(dto.getCode());
+        // entity.setReference(dto.getReference());
+        // if (dto.getClient() != null) {
+        //     entity.setDenominationClient(dto.getClient().getNom());
+        // }
+        entity.setIdClient(dto.getIdClient());
+        entity.setCommentaire(dto.getCommentaire());
+        // if (dto.getTypeStatut() != null) {
+        //     entity.setTypeStatut(Integer.parseInt(dto.getTypeStatut().getKey()));
+        // }
+        // entity.setTypeStatut(dto.getIdTypeStatut());
+        entity.setDateOperation(DateHelper.toDate(dto.getDateOperation()));
+        // entity.setDateCreation(DateHelper.toDate(dto.getDateCreation()));
+        // entity.setDateModification(DateHelper.toDate(dto.getDateModification()));
+        if (dto.getClient() != null) {
+            entity.setIdClient(dto.getClient().getId());
         }
+        // entity.setIdClient(dto.getIdClient());
+        // if (dto.getTva() != null) {
+        //     entity.setIdTva(dto.getTva().getId());
+        // }
+        // if (dto.getClient().getAssujettiTva() == true) {
+        //     entity.setTauxTva(dto.getTva().getTaux());
+        // }
 
         return entity;
     }
@@ -81,12 +116,12 @@ public class DevisMapper {
 
         DevisDTO dto = new DevisDTO();
 
-        StaticValue staticValStatut = new StaticValue();
-        StaticListOfValues listOfValuesStatut = new StaticListOfValues();
-        staticValStatut.setKey(
-                listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey().trim());
-        staticValStatut.setValue(
-                listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getValue());
+        // StaticValue staticValStatut = new StaticValue();
+        // StaticListOfValues listOfValuesStatut = new StaticListOfValues();
+        // staticValStatut.setKey(
+        //         listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey().trim());
+        // staticValStatut.setValue(
+        //         listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getValue());
 
         dto.setId(entity.getId());
 
@@ -94,7 +129,7 @@ public class DevisMapper {
         dto.setReference(entity.getReference());
         dto.setDenominationClient(entity.getDenominationClient());
         dto.setCommentaire(entity.getCommentaire());
-        dto.setTypeStatut(staticValStatut);
+        // dto.setTypeStatut(staticValStatut);
         dto.setDateOperation(DateHelper.toText(entity.getDateOperation(), "time"));
         dto.setDateCreation(DateHelper.toText(entity.getDateCreation(), "time"));
         dto.setDateModification(DateHelper.toText(entity.getDateModification(), "time"));
@@ -110,7 +145,7 @@ public class DevisMapper {
         if (entity.getClient().getAssujettiTva() == true) {
             dto.setTauxTva(entity.getTauxTva());
         } else {
-            dto.setTauxTva(null);
+            dto.setTauxTva(0.0);
         }
         if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
             dto.setMontantTotalTTC(

@@ -21,6 +21,7 @@ public class ServiceDetailDTO {
     private String code;
     private String designation;
     private String uniteMesure;
+    private Long idService;
     private ServiceDTO service;
 
     public ServiceDetailDTO modifyValues(ServiceDetailDTO updated) {

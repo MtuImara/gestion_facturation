@@ -20,10 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import backend.rest_api.gestion_facturation.constantes.StaticValue;
 import backend.rest_api.gestion_facturation.gestionDevis.dto.DevisDTO;
+import backend.rest_api.gestion_facturation.gestionDevis.dto.DevisDetailDTO;
+import backend.rest_api.gestion_facturation.gestionDevis.entity.DevisDetailEntity;
 import backend.rest_api.gestion_facturation.gestionDevis.entity.DevisEntity;
+import backend.rest_api.gestion_facturation.gestionDevis.mapper.DevisDetailMapper;
 import backend.rest_api.gestion_facturation.gestionDevis.mapper.DevisMapper;
+import backend.rest_api.gestion_facturation.gestionDevis.repository.DevisDetailRepository;
 import backend.rest_api.gestion_facturation.gestionDevis.repository.DevisRepository;
 import backend.rest_api.gestion_facturation.gestionDevis.service.DevisService;
+import backend.rest_api.gestion_facturation.gestionServices.dto.ServiceDetailDTO;
+import backend.rest_api.gestion_facturation.gestionServices.entity.ServiceDetailEntity;
+import backend.rest_api.gestion_facturation.gestionServices.mapper.ServiceDetailMapper;
 import backend.rest_api.gestion_facturation.helpers.MessageHelper;
 import backend.rest_api.gestion_facturation.helpers.ResponseHelper;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +46,7 @@ public class DevisController {
 
     private final DevisService devisService;
     private final DevisRepository devisRepository;
+    private final DevisDetailRepository devisDetailRepository;
 
     @GetMapping(value = "/type_de_statut_du_devis")
     public ResponseEntity<?> getTypeStatut() {
@@ -80,6 +88,17 @@ public class DevisController {
         }
     }
 
+    @GetMapping(value = "/detail/{id}")
+    public ResponseEntity<?> getByIdDevisDetailController(@PathVariable(name = "id", required = true) Long id) {
+        DevisDetailDTO devisDetailDto = devisService.getDevisDetailById(id);
+        if (devisDetailDto != null) {
+            return new ResponseEntity<>(new ResponseHelper(devisDetailDto, true), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ResponseHelper(MessageHelper.notFound(), false),
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping(value = "/")
     public ResponseEntity<?> ajouterDevisController(@RequestBody DevisDTO devisDto) {
 
@@ -92,11 +111,31 @@ public class DevisController {
                     HttpStatus.BAD_REQUEST);
         } else {
             DevisDTO dtos = devisService
-                    .ajoutDevisService(devisDto);
+                    .ajouter(devisDto);
             return new ResponseEntity<>(
                     new ResponseHelper(MessageHelper.createdSuccessfully(), dtos, true),
                     HttpStatus.CREATED);
         }
+
+    }
+
+    @PostMapping(value = "/ajout_detail")
+    public ResponseEntity<?> ajouterDetailDevisController(@RequestBody DevisDetailDTO dto) {
+
+        DevisDetailEntity entity = DevisDetailMapper.getInstance()
+                .convertToEntity(dto);
+
+        // if (serviceRepository.existsByCode(entity.getCode())) {
+        //     return new ResponseEntity<>(
+        //             new ResponseHelper(MessageHelper.dataExist("code"), false),
+        //             HttpStatus.BAD_REQUEST);
+        // } else {
+            DevisDetailDTO devisDetail = devisService
+                    .ajoutDevisDetailService(dto);
+            return new ResponseEntity<>(
+                    new ResponseHelper(MessageHelper.createdSuccessfully(), devisDetail, true),
+                    HttpStatus.CREATED);
+        // }
 
     }
 
@@ -116,7 +155,7 @@ public class DevisController {
                         new ResponseHelper(("code " + devisDto.getCode() + " exist"), true),
                         HttpStatus.BAD_REQUEST);
             } else {
-                DevisDTO devisDto2 = devisService.modificationDevisService(id,
+                DevisDTO devisDto2 = devisService.update(id,
                         devisDto);
 
                 return new ResponseEntity<>(
@@ -139,6 +178,59 @@ public class DevisController {
         try {
             if (idOptional.isPresent()) {
                 devisRepository.deleteById(id);
+                return new ResponseEntity<>(new ResponseHelper(MessageHelper.success(), true), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ResponseHelper(
+                        MessageHelper.notFound("ID"), false), HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseHelper(MessageHelper
+                    .internalServer(), false),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @PutMapping(value = "/modefier_detail/{id}")
+    public ResponseEntity<?> modifierDevisDetailController(@PathVariable(name = "id", required = true) Long id,
+            @RequestBody DevisDetailDTO dto) {
+
+        // Optional<ServiceEntity> serviceIdOptional = serviceRepository.findById(id);
+
+        // Optional<ServiceEntity> codeExist = serviceRepository.verificationCode(id,
+        //         dto.getCode());
+
+        // if (serviceIdOptional.isPresent()) {
+
+        //     if (codeExist.isPresent()) {
+        //         return new ResponseEntity<>(
+        //                 new ResponseHelper(("code " + dto.getCode() + " exist"), false),
+        //                 HttpStatus.BAD_REQUEST);
+        //     } else {
+            DevisDetailDTO serviceDto = devisService.updateDevisDetail(id,
+                        dto);
+
+                return new ResponseEntity<>(
+                        new ResponseHelper(MessageHelper.updatedSuccessfully("Detail Service"),
+                                serviceDto,
+                                true),
+                        HttpStatus.OK);
+    //         }
+
+    //     } else {
+    //         return new ResponseEntity<>(
+    //                 new ResponseHelper(MessageHelper.notFound("id: " + id), false),
+    //                 HttpStatus.NOT_FOUND);
+    //     }
+    }
+
+    @RequestMapping(value = "/delete_detail/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> supprimerDevisDetailController(@PathVariable("id") Long id) {
+        Optional<DevisDetailEntity> idOptional = devisDetailRepository.findById(id);
+
+        try {
+            if (idOptional.isPresent()) {
+                devisDetailRepository.deleteById(id);
                 return new ResponseEntity<>(new ResponseHelper(MessageHelper.success(), true), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ResponseHelper(

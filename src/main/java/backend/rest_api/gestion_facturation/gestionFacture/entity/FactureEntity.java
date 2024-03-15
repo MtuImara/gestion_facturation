@@ -10,6 +10,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import backend.rest_api.gestion_facturation.gestionClient.entity.ClientEntity;
 import backend.rest_api.gestion_facturation.gestionTVA.entity.TauxTvaEntity;
+import backend.rest_api.gestion_facturation.gestionServices.mapper.ServiceMapper;
+import backend.rest_api.gestion_facturation.gestionServices.dto.ServiceDetailDTO;
+import backend.rest_api.gestion_facturation.gestionServices.entity.ServiceDetailEntity;
+import backend.rest_api.gestion_facturation.gestionServices.mapper.ServiceDetailMapper;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -70,6 +74,14 @@ public class FactureEntity implements Serializable {
     @JsonIgnore
     @JoinColumn(name = "id_client", referencedColumnName = "id", insertable = false, updatable = false, nullable = false)
     private ClientEntity client;
+
+    @Column(name = "id_service", nullable = true)
+    private Long idService;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinColumn(name = "id_service", referencedColumnName = "id", insertable = false, updatable = false, nullable = false)
+    private ServiceEntity service;
 
     @Column(name = "id_tva", nullable = true)
     private Long idTva;

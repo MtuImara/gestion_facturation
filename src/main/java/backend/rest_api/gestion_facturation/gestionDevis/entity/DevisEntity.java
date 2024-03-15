@@ -52,7 +52,7 @@ public class DevisEntity implements Serializable {
     @Column(name = "commentaire", nullable = true)
     private String commentaire;
 
-    @Column(name = "type_statut", length = 11)
+    @Column(name = "type_statut", length = 11, nullable = true)
     private Integer typeStatut;
 
     @Column(name = "date_operation")

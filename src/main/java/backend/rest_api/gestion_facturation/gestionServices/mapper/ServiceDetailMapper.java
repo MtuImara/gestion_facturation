@@ -23,6 +23,7 @@ public class ServiceDetailMapper {
         entity.setCode(dto.getCode());
         entity.setDesignation(dto.getDesignation());
         entity.setUniteMesure(dto.getUniteMesure());
+        entity.setIdService(dto.getIdService());
         if (dto.getService() != null) {
             entity.setIdService(dto.getService().getId());
         }
@@ -38,6 +39,7 @@ public class ServiceDetailMapper {
         dto.setCode(entity.getCode());
         dto.setDesignation(entity.getDesignation());
         dto.setUniteMesure(entity.getUniteMesure());
+        dto.setIdService(entity.getIdService());
 
         return dto;
 

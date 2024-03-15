@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import backend.rest_api.gestion_facturation.gestionServices.entity.ServiceEntity;
+import backend.rest_api.gestion_facturation.gestionServices.entity.ServiceDetailEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,13 +35,13 @@ public class FactureDetailEntity implements Serializable {
     @Column(name = "id", length = 11)
     private Long id;
 
-    @Column(name = "id_service", nullable = true)
-    private Long idService;
+    @Column(name = "id_service_detail", nullable = true)
+    private Long idServiceDetail;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    @JoinColumn(name = "id_service", referencedColumnName = "id", insertable = false, updatable = false, nullable = false)
-    private ServiceEntity service;
+    @JoinColumn(name = "id_service_detail", referencedColumnName = "id", insertable = false, updatable = false, nullable = false)
+    private ServiceDetailEntity serviceDetail;
 
     @Column(name = "designation")
     private String designation;

@@ -21,7 +21,9 @@ import lombok.NoArgsConstructor;
 public class DevisDetailDTO {
 
     private Long id;
+    private Long idDevis;
     private ServiceDTO service;
+    private Long id_service;
     private String designation;
     private Double quantite;
     private Double prixUnitHt;
@@ -33,6 +35,8 @@ public class DevisDetailDTO {
                 updated.getDesignation() != null ? updated.getDesignation() : this.getDesignation());
         this.setQuantite(updated.getQuantite() != null ? updated.getQuantite() : this.getQuantite());
         this.setPrixUnitHt(updated.getPrixUnitHt() != null ? updated.getPrixUnitHt() : this.getPrixUnitHt());
+        this.setIdDevis(updated.getIdDevis() != null ? updated.getIdDevis() : this.getIdDevis());
+        this.setId_service(updated.getId_service() != null ? updated.getId_service() : this.getId_service());
 
         return this;
     }
