@@ -1,4 +1,5 @@
 package backend.rest_api.gestion_facturation.gestionServices.controller;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import backend.rest_api.gestion_facturation.gestionClient.entity.ClientEntity;
 import backend.rest_api.gestion_facturation.gestionServices.dto.ServiceDTO;
 import backend.rest_api.gestion_facturation.gestionServices.dto.ServiceDetailDTO;
 import backend.rest_api.gestion_facturation.gestionServices.entity.ServiceDetailEntity;
@@ -38,7 +38,7 @@ public class GestionServicesController {
     private final GestionServicesService gestionServicesService;
     private final ServiceRepository serviceRepository;
     private final ServiceDetailRepository serviceDetailRepository;
-    
+
     @GetMapping(value = "/")
     public ResponseEntity<?> getAllServicesController(@RequestParam(required = false) String title,
             @RequestParam(defaultValue = "1") int page,
@@ -108,15 +108,15 @@ public class GestionServicesController {
                 .convertToEntity(dto);
 
         // if (serviceRepository.existsByCode(entity.getCode())) {
-        //     return new ResponseEntity<>(
-        //             new ResponseHelper(MessageHelper.dataExist("code"), false),
-        //             HttpStatus.BAD_REQUEST);
+        // return new ResponseEntity<>(
+        // new ResponseHelper(MessageHelper.dataExist("code"), false),
+        // HttpStatus.BAD_REQUEST);
         // } else {
-            ServiceDetailDTO serviceDetail = gestionServicesService
-                    .ajoutServiceDetailService(dto);
-            return new ResponseEntity<>(
-                    new ResponseHelper(MessageHelper.createdSuccessfully(), serviceDetail, true),
-                    HttpStatus.CREATED);
+        ServiceDetailDTO serviceDetail = gestionServicesService
+                .ajoutServiceDetailService(dto);
+        return new ResponseEntity<>(
+                new ResponseHelper(MessageHelper.createdSuccessfully(), serviceDetail, true),
+                HttpStatus.CREATED);
         // }
 
     }
@@ -161,30 +161,30 @@ public class GestionServicesController {
         // Optional<ServiceEntity> serviceIdOptional = serviceRepository.findById(id);
 
         // Optional<ServiceEntity> codeExist = serviceRepository.verificationCode(id,
-        //         dto.getCode());
+        // dto.getCode());
 
         // if (serviceIdOptional.isPresent()) {
 
-        //     if (codeExist.isPresent()) {
-        //         return new ResponseEntity<>(
-        //                 new ResponseHelper(("code " + dto.getCode() + " exist"), false),
-        //                 HttpStatus.BAD_REQUEST);
-        //     } else {
-                ServiceDetailDTO serviceDto = gestionServicesService.updateServiceDetail(id,
-                        dto);
+        // if (codeExist.isPresent()) {
+        // return new ResponseEntity<>(
+        // new ResponseHelper(("code " + dto.getCode() + " exist"), false),
+        // HttpStatus.BAD_REQUEST);
+        // } else {
+        ServiceDetailDTO serviceDto = gestionServicesService.updateServiceDetail(id,
+                dto);
 
-                return new ResponseEntity<>(
-                        new ResponseHelper(MessageHelper.updatedSuccessfully("Service"),
-                                serviceDto,
-                                true),
-                        HttpStatus.OK);
-    //         }
+        return new ResponseEntity<>(
+                new ResponseHelper(MessageHelper.updatedSuccessfully("Service"),
+                        serviceDto,
+                        true),
+                HttpStatus.OK);
+        // }
 
-    //     } else {
-    //         return new ResponseEntity<>(
-    //                 new ResponseHelper(MessageHelper.notFound("id: " + id), false),
-    //                 HttpStatus.NOT_FOUND);
-    //     }
+        // } else {
+        // return new ResponseEntity<>(
+        // new ResponseHelper(MessageHelper.notFound("id: " + id), false),
+        // HttpStatus.NOT_FOUND);
+        // }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -225,5 +225,22 @@ public class GestionServicesController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    @GetMapping(value = "/service_detail")
+    public ResponseEntity<?> getAllServiceDetailController(@RequestParam(required = false) String title,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id,desc") String[] sort) {
+
+        Map<String, Object> facture = gestionServicesService.getAllServiceDetail(title, page - 1, size, sort);
+
+        if (facture.size() > 0) {
+            return new ResponseEntity<>(new ResponseHelper(MessageHelper.success(), facture, true),
+                    HttpStatus.OK);
+
+        } else {
+            return new ResponseEntity<>(new ResponseHelper(MessageHelper.noContent()), HttpStatus.OK);
+        }
     }
 }

@@ -71,8 +71,8 @@ public class GestionServicesService {
 
         ServiceDetailEntity serviceDetailEntity = null;
         try {
-                serviceDetailEntity = serviceDetailRepository.getReferenceById(id);
-                ServiceDetailDTO serviceDetailDto = ServiceDetailMapper
+            serviceDetailEntity = serviceDetailRepository.getReferenceById(id);
+            ServiceDetailDTO serviceDetailDto = ServiceDetailMapper
                     .getInstance()
                     .convertToDto(serviceDetailEntity);
             return serviceDetailDto;
@@ -84,96 +84,94 @@ public class GestionServicesService {
 
     public ServiceDTO ajoutService(ServiceDTO dto) {
 
-                try {
-                        ServiceEntity entity = new ServiceEntity();
-                        entity = ServiceMapper.getInstance()
-                                        .convertToEntity(dto);
+        try {
+            ServiceEntity entity = new ServiceEntity();
+            entity = ServiceMapper.getInstance()
+                    .convertToEntity(dto);
 
-                        ServiceEntity creation = serviceRepository.save(entity);
+            ServiceEntity creation = serviceRepository.save(entity);
 
-                        /* Enregistrement automatique des détails du service */
-                        
+            /* Enregistrement automatique des détails du service */
 
-                        List<ServiceDetailDTO> services_details = dto.getServiceDetail();
+            List<ServiceDetailDTO> services_details = dto.getServiceDetail();
 
-                        for (ServiceDetailDTO service_detail : services_details) {
+            for (ServiceDetailDTO service_detail : services_details) {
 
-                                ServiceDetailEntity detailEntity = ServiceDetailMapper.getInstance()
-                                                .convertToEntity(service_detail);
+                ServiceDetailEntity detailEntity = ServiceDetailMapper.getInstance()
+                        .convertToEntity(service_detail);
 
-                                detailEntity.setIdService(entity.getId());
+                detailEntity.setIdService(entity.getId());
 
-                                serviceDetailRepository.save(detailEntity);
-                        }
+                serviceDetailRepository.save(detailEntity);
+            }
 
-                        /* Fin Enregistrement automatique des détails du service */
+            /* Fin Enregistrement automatique des détails du service */
 
-                        dto = creation != null
-                                        ? ServiceMapper.getInstance()
-                                                        .convertToDto(creation)
-                                        : null;
-                } catch (Exception ex) {
-                        dto = null;
-                        System.out.println("null" + ex.getMessage());
-                }
-
-                return dto;
+            dto = creation != null
+                    ? ServiceMapper.getInstance()
+                            .convertToDto(creation)
+                    : null;
+        } catch (Exception ex) {
+            dto = null;
+            System.out.println("null" + ex.getMessage());
         }
 
-        public ServiceDTO modificationService(Long id,
-                        ServiceDTO updated) {
-                ServiceEntity converted_Entity, updated_Entity = null;
-                try {
+        return dto;
+    }
 
-                        ServiceDTO getById = getById(id);
-                        converted_Entity = ServiceMapper.getInstance()
-                                        .convertToEntity(getById.modifyValues(updated));
+    public ServiceDTO modificationService(Long id,
+            ServiceDTO updated) {
+        ServiceEntity converted_Entity, updated_Entity = null;
+        try {
 
-                        updated_Entity = serviceRepository.save(converted_Entity);
+            ServiceDTO getById = getById(id);
+            converted_Entity = ServiceMapper.getInstance()
+                    .convertToEntity(getById.modifyValues(updated));
 
-                        /* Enregistrement automatique des détails du service */
+            updated_Entity = serviceRepository.save(converted_Entity);
 
-                        List<ServiceDetailDTO> services_details = updated.getServiceDetail();
+            /* Enregistrement automatique des détails du service */
 
-                        for (ServiceDetailDTO service_detail : services_details) {
+            List<ServiceDetailDTO> services_details = updated.getServiceDetail();
 
-                                ServiceDetailEntity rfd = ServiceDetailMapper.getInstance()
-                                                .convertToEntity(service_detail);
+            for (ServiceDetailDTO service_detail : services_details) {
 
-                                rfd.setIdService(updated_Entity.getId());
+                ServiceDetailEntity rfd = ServiceDetailMapper.getInstance()
+                        .convertToEntity(service_detail);
 
-                                serviceDetailRepository.save(rfd);
-                        }
+                rfd.setIdService(updated_Entity.getId());
 
-                        /* Fin Enregistrement automatique des détails du service */
-                        updated = ServiceMapper.getInstance()
-                                        .convertToDto(updated_Entity);
+                serviceDetailRepository.save(rfd);
+            }
 
-                } catch (Exception e) {
-                        System.out.println("Erreur lors de la modification: " + e.getMessage());
-                        updated = null;
-                }
+            /* Fin Enregistrement automatique des détails du service */
+            updated = ServiceMapper.getInstance()
+                    .convertToDto(updated_Entity);
 
-                return updated;
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la modification: " + e.getMessage());
+            updated = null;
         }
 
+        return updated;
+    }
 
     // Ajout et Modification des données séparées
-    
+
     public ServiceDTO ajouter(ServiceDTO serviceDto) {
 
         try {
-                ServiceEntity serviceEntity = new ServiceEntity();
-                serviceEntity = ServiceMapper.getInstance()
+            ServiceEntity serviceEntity = new ServiceEntity();
+            serviceEntity = ServiceMapper.getInstance()
                     .convertToEntity(serviceDto);
-                //     serviceEntity.setDateCreation(DateHelper.now());
-                    ServiceEntity creationService = serviceRepository.save(serviceEntity);
+            // serviceEntity.setDateCreation(DateHelper.now());
+            ServiceEntity creationService = serviceRepository.save(serviceEntity);
 
-                    serviceDto = creationService != null
+            serviceDto = creationService != null
                     ? ServiceMapper.getInstance().convertToDto(creationService)
                     : null;
         } catch (Exception ex) {
-                serviceDto = null;
+            serviceDto = null;
             System.out.println("null" + ex.getMessage());
         }
 
@@ -183,17 +181,17 @@ public class GestionServicesService {
     public ServiceDetailDTO ajoutServiceDetailService(ServiceDetailDTO serviceDetailDto) {
 
         try {
-                ServiceDetailEntity serviceDetailEntity = new ServiceDetailEntity();
-                serviceDetailEntity = ServiceDetailMapper.getInstance()
+            ServiceDetailEntity serviceDetailEntity = new ServiceDetailEntity();
+            serviceDetailEntity = ServiceDetailMapper.getInstance()
                     .convertToEntity(serviceDetailDto);
-                //     serviceDetailEntity.setDateCreation(DateHelper.now());
-                ServiceDetailEntity creationServiceDetail = serviceDetailRepository.save(serviceDetailEntity);
+            // serviceDetailEntity.setDateCreation(DateHelper.now());
+            ServiceDetailEntity creationServiceDetail = serviceDetailRepository.save(serviceDetailEntity);
 
-                serviceDetailDto = creationServiceDetail != null
+            serviceDetailDto = creationServiceDetail != null
                     ? ServiceDetailMapper.getInstance().convertToDto(creationServiceDetail)
                     : null;
         } catch (Exception ex) {
-                serviceDetailDto = null;
+            serviceDetailDto = null;
             System.out.println("null" + ex.getMessage());
         }
 
@@ -204,7 +202,7 @@ public class GestionServicesService {
         ServiceEntity converted_ServiceEntity, updated_ServiceEntity = null;
         try {
 
-                ServiceDTO serviceDto = getById(id);
+            ServiceDTO serviceDto = getById(id);
             converted_ServiceEntity = ServiceMapper.getInstance()
                     .convertToEntity(serviceDto.modifyValues(updated));
             // converted_ClientEntity.setDateModification(DateHelper.now());
@@ -223,7 +221,7 @@ public class GestionServicesService {
         ServiceDetailEntity converted_ServiceDetailEntity, updated_ServiceDetailEntity = null;
         try {
 
-                ServiceDetailDTO serviceDetailDto = getServiceDetailById(id);
+            ServiceDetailDTO serviceDetailDto = getServiceDetailById(id);
             converted_ServiceDetailEntity = ServiceDetailMapper.getInstance()
                     .convertToEntity(serviceDetailDto.modifyValues(updated));
             // converted_ClientEntity.setDateModification(DateHelper.now());
@@ -237,5 +235,31 @@ public class GestionServicesService {
 
         return updated;
     }
-    
+
+    public Map<String, Object> getAllServiceDetail(String title, int page, int size, String[] sort) {
+
+        Pageable pagingSort = PagingAndSortingHelper.pagination(sort, page, size);
+
+        Page<ServiceDetailEntity> serviceDetailEntity = null;
+
+        if (title == null || title.equals("")) {
+            serviceDetailEntity = serviceDetailRepository.findAll(pagingSort);
+        } else {
+        }
+
+        List<ServiceDetailDTO> serviceDetailDtos = new ArrayList<>();
+
+        for (ServiceDetailEntity serviceDetailEntities : serviceDetailEntity) {
+            serviceDetailDtos.add(ServiceDetailMapper.getInstance().convertToDto(serviceDetailEntities));
+        }
+
+        Map<String, Object> data = PagingAndSortingHelper.filteredAndSortedResult(
+                serviceDetailEntity.getNumber(),
+                serviceDetailEntity.getTotalElements(),
+                serviceDetailEntity.getTotalPages(),
+                serviceDetailEntity);
+
+        return data;
+    }
+
 }

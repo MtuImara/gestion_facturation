@@ -82,13 +82,14 @@ public class FactureService {
 
             FactureDTO dto = new FactureDTO();
 
-            StaticValue staticValStatut = new StaticValue();
-            StaticListOfValues listOfValuesStatut = new StaticListOfValues();
-            staticValStatut.setKey(
-                    listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey()
-                            .trim());
-            staticValStatut.setValue(
-                    listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getValue());
+            // StaticValue staticValStatut = new StaticValue();
+            // StaticListOfValues listOfValuesStatut = new StaticListOfValues();
+            // staticValStatut.setKey(
+            // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey()
+            // .trim());
+            // staticValStatut.setValue(
+            // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() -
+            // 1).getValue());
 
             dto.setId(entity.getId());
 
@@ -96,12 +97,9 @@ public class FactureService {
             dto.setReference(entity.getReference());
             dto.setDenominationClient(entity.getDenominationClient());
             dto.setCommentaire(entity.getCommentaire());
-            if (staticValStatut != null) {
-                dto.setTypeStatut(staticValStatut);
-            } else {
-                dto.setTypeStatut(null);
-            }
-
+            // if (staticValStatut != null) {
+            // dto.setTypeStatut(staticValStatut);
+            // }
             dto.setDateOperation(DateHelper.toText(entity.getDateOperation(), "time"));
             dto.setDateEcheance(DateHelper.toText(entity.getDateEcheance(), "time"));
             dto.setDateCreation(DateHelper.toText(entity.getDateCreation(), "time"));
@@ -164,13 +162,14 @@ public class FactureService {
 
             FactureDTO dto = new FactureDTO();
 
-            StaticValue staticValStatut = new StaticValue();
-            StaticListOfValues listOfValuesStatut = new StaticListOfValues();
-            staticValStatut.setKey(
-                    listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey()
-                            .trim());
-            staticValStatut.setValue(
-                    listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getValue());
+            // StaticValue staticValStatut = new StaticValue();
+            // StaticListOfValues listOfValuesStatut = new StaticListOfValues();
+            // staticValStatut.setKey(
+            // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey()
+            // .trim());
+            // staticValStatut.setValue(
+            // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() -
+            // 1).getValue());
 
             dto.setId(entity.getId());
 
@@ -178,11 +177,11 @@ public class FactureService {
             dto.setReference(entity.getReference());
             dto.setDenominationClient(entity.getDenominationClient());
             dto.setCommentaire(entity.getCommentaire());
-            if (staticValStatut != null) {
-                dto.setTypeStatut(staticValStatut);
-            } else {
-                dto.setTypeStatut(null);
-            }
+            // if (staticValStatut != null) {
+            // dto.setTypeStatut(staticValStatut);
+            // } else {
+            // dto.setTypeStatut(null);
+            // }
             dto.setDateOperation(DateHelper.toText(entity.getDateOperation(), "time"));
             dto.setDateEcheance(DateHelper.toText(entity.getDateEcheance(), "time"));
             dto.setDateCreation(DateHelper.toText(entity.getDateCreation(), "time"));
@@ -398,5 +397,7 @@ public class FactureService {
 
         return updated;
     }
+
+    
 
 }

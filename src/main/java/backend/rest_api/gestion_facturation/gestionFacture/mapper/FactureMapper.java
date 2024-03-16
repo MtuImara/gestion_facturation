@@ -42,9 +42,9 @@ public class FactureMapper {
         entity.setReference(dto.getReference());
         entity.setDenominationClient(dto.getDenominationClient());
         entity.setCommentaire(dto.getCommentaire());
-        if (dto.getTypeStatut() != null) {
-            entity.setTypeStatut(Integer.parseInt(dto.getTypeStatut().getKey()));
-        }
+        // if (dto.getTypeStatut() != null) {
+        // entity.setTypeStatut(Integer.parseInt(dto.getTypeStatut().getKey()));
+        // }
         entity.setDateOperation(DateHelper.toDate(dto.getDateOperation()));
         entity.setDateEcheance(DateHelper.toDate(dto.getDateEcheance()));
         entity.setDateCreation(DateHelper.toDate(dto.getDateCreation()));
@@ -52,15 +52,15 @@ public class FactureMapper {
         if (dto.getClient() != null) {
             entity.setIdClient(dto.getClient().getId());
         }
+        entity.setIdClient(dto.getIdClient());
         if (dto.getService() != null) {
             entity.setIdService(dto.getService().getId());
         }
+        entity.setIdService(dto.getId_service());
         if (dto.getTva() != null) {
             entity.setIdTva(dto.getTva().getId());
         }
-        if (dto.getClient().getAssujettiTva() == true) {
-            entity.setTauxTva(dto.getTva().getTaux());
-        }
+        entity.setTauxTva(dto.getTauxTva());
 
         return entity;
     }
