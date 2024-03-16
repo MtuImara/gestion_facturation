@@ -20,8 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import backend.rest_api.gestion_facturation.constantes.StaticValue;
 import backend.rest_api.gestion_facturation.gestionFacture.dto.FactureDTO;
+import backend.rest_api.gestion_facturation.gestionFacture.dto.FactureDetailDTO;
+import backend.rest_api.gestion_facturation.gestionFacture.entity.FactureDetailEntity;
 import backend.rest_api.gestion_facturation.gestionFacture.entity.FactureEntity;
+import backend.rest_api.gestion_facturation.gestionFacture.mapper.FactureDetailMapper;
 import backend.rest_api.gestion_facturation.gestionFacture.mapper.FactureMapper;
+import backend.rest_api.gestion_facturation.gestionFacture.repository.FactureDetailRepository;
 import backend.rest_api.gestion_facturation.gestionFacture.repository.FactureRepository;
 import backend.rest_api.gestion_facturation.gestionFacture.service.FactureService;
 import backend.rest_api.gestion_facturation.helpers.MessageHelper;
@@ -39,6 +43,7 @@ public class FactureController {
 
     private final FactureService factureService;
     private final FactureRepository factureRepository;
+    private final FactureDetailRepository factureDetailRepository;
 
     @GetMapping(value = "/type_de_statut_du_facture")
     public ResponseEntity<?> getTypeStatut() {
@@ -92,7 +97,7 @@ public class FactureController {
                     HttpStatus.BAD_REQUEST);
         } else {
             FactureDTO dtos = factureService
-                    .ajoutFactureService(factureDto);
+                    .ajouter(factureDto);
             return new ResponseEntity<>(
                     new ResponseHelper(MessageHelper.createdSuccessfully(), dtos, true),
                     HttpStatus.CREATED);
@@ -116,7 +121,7 @@ public class FactureController {
                         new ResponseHelper(("code " + factureDto.getCode() + " exist"), true),
                         HttpStatus.BAD_REQUEST);
             } else {
-                FactureDTO factureDto2 = factureService.modificationFactureService(id,
+                FactureDTO factureDto2 = factureService.update(id,
                         factureDto);
 
                 return new ResponseEntity<>(
@@ -139,6 +144,78 @@ public class FactureController {
         try {
             if (idOptional.isPresent()) {
                 factureRepository.deleteById(id);
+                return new ResponseEntity<>(new ResponseHelper(MessageHelper.success(), true), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ResponseHelper(
+                        MessageHelper.notFound("ID"), false), HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseHelper(MessageHelper
+                    .internalServer(), false),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @PostMapping(value = "/ajout_detail")
+    public ResponseEntity<?> ajouterDetailFactureController(@RequestBody FactureDetailDTO dto) {
+
+        FactureDetailEntity entity = FactureDetailMapper.getInstance()
+                .convertToEntity(dto);
+
+        // if (serviceRepository.existsByCode(entity.getCode())) {
+        // return new ResponseEntity<>(
+        // new ResponseHelper(MessageHelper.dataExist("code"), false),
+        // HttpStatus.BAD_REQUEST);
+        // } else {
+        FactureDetailDTO factureDetail = factureService
+                .ajoutFactureDetailService(dto);
+        return new ResponseEntity<>(
+                new ResponseHelper(MessageHelper.createdSuccessfully(), factureDetail, true),
+                HttpStatus.CREATED);
+        // }
+    }
+
+    @PutMapping(value = "/modefier_detail/{id}")
+    public ResponseEntity<?> modifierFactureDetailController(@PathVariable(name = "id", required = true) Long id,
+            @RequestBody FactureDetailDTO dto) {
+
+        // Optional<ServiceEntity> serviceIdOptional = serviceRepository.findById(id);
+
+        // Optional<ServiceEntity> codeExist = serviceRepository.verificationCode(id,
+        // dto.getCode());
+
+        // if (serviceIdOptional.isPresent()) {
+
+        // if (codeExist.isPresent()) {
+        // return new ResponseEntity<>(
+        // new ResponseHelper(("code " + dto.getCode() + " exist"), false),
+        // HttpStatus.BAD_REQUEST);
+        // } else {
+        FactureDetailDTO factureDto = factureService.updateFactureDetail(id,
+                dto);
+
+        return new ResponseEntity<>(
+                new ResponseHelper(MessageHelper.updatedSuccessfully("Detail Facture"),
+                        factureDto,
+                        true),
+                HttpStatus.OK);
+        // }
+
+        // } else {
+        // return new ResponseEntity<>(
+        // new ResponseHelper(MessageHelper.notFound("id: " + id), false),
+        // HttpStatus.NOT_FOUND);
+        // }
+    }
+
+    @RequestMapping(value = "/delete_detail/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> supprimerFactureDetailController(@PathVariable("id") Long id) {
+        Optional<FactureDetailEntity> idOptional = factureDetailRepository.findById(id);
+
+        try {
+            if (idOptional.isPresent()) {
+                factureDetailRepository.deleteById(id);
                 return new ResponseEntity<>(new ResponseHelper(MessageHelper.success(), true), HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(new ResponseHelper(

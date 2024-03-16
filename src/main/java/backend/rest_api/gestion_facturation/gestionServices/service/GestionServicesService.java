@@ -67,6 +67,21 @@ public class GestionServicesService {
         }
     }
 
+    public ServiceDetailDTO getServiceDetailById(Long id) {
+
+        ServiceDetailEntity serviceDetailEntity = null;
+        try {
+                serviceDetailEntity = serviceDetailRepository.getReferenceById(id);
+                ServiceDetailDTO serviceDetailDto = ServiceDetailMapper
+                    .getInstance()
+                    .convertToDto(serviceDetailEntity);
+            return serviceDetailDto;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
     public ServiceDTO ajoutService(ServiceDTO dto) {
 
                 try {
@@ -77,6 +92,7 @@ public class GestionServicesService {
                         ServiceEntity creation = serviceRepository.save(entity);
 
                         /* Enregistrement automatique des détails du service */
+                        
 
                         List<ServiceDetailDTO> services_details = dto.getServiceDetail();
 
@@ -140,5 +156,86 @@ public class GestionServicesService {
 
                 return updated;
         }
+
+
+    // Ajout et Modification des données séparées
+    
+    public ServiceDTO ajouter(ServiceDTO serviceDto) {
+
+        try {
+                ServiceEntity serviceEntity = new ServiceEntity();
+                serviceEntity = ServiceMapper.getInstance()
+                    .convertToEntity(serviceDto);
+                //     serviceEntity.setDateCreation(DateHelper.now());
+                    ServiceEntity creationService = serviceRepository.save(serviceEntity);
+
+                    serviceDto = creationService != null
+                    ? ServiceMapper.getInstance().convertToDto(creationService)
+                    : null;
+        } catch (Exception ex) {
+                serviceDto = null;
+            System.out.println("null" + ex.getMessage());
+        }
+
+        return serviceDto;
+    }
+
+    public ServiceDetailDTO ajoutServiceDetailService(ServiceDetailDTO serviceDetailDto) {
+
+        try {
+                ServiceDetailEntity serviceDetailEntity = new ServiceDetailEntity();
+                serviceDetailEntity = ServiceDetailMapper.getInstance()
+                    .convertToEntity(serviceDetailDto);
+                //     serviceDetailEntity.setDateCreation(DateHelper.now());
+                ServiceDetailEntity creationServiceDetail = serviceDetailRepository.save(serviceDetailEntity);
+
+                serviceDetailDto = creationServiceDetail != null
+                    ? ServiceDetailMapper.getInstance().convertToDto(creationServiceDetail)
+                    : null;
+        } catch (Exception ex) {
+                serviceDetailDto = null;
+            System.out.println("null" + ex.getMessage());
+        }
+
+        return serviceDetailDto;
+    }
+
+    public ServiceDTO update(Long id, ServiceDTO updated) {
+        ServiceEntity converted_ServiceEntity, updated_ServiceEntity = null;
+        try {
+
+                ServiceDTO serviceDto = getById(id);
+            converted_ServiceEntity = ServiceMapper.getInstance()
+                    .convertToEntity(serviceDto.modifyValues(updated));
+            // converted_ClientEntity.setDateModification(DateHelper.now());
+            updated_ServiceEntity = serviceRepository.save(converted_ServiceEntity);
+            updated = ServiceMapper.getInstance().convertToDto(updated_ServiceEntity);
+
+        } catch (Exception e) {
+            System.out.println("Erreur lors du Service: " + e.getMessage());
+            updated = null;
+        }
+
+        return updated;
+    }
+
+    public ServiceDetailDTO updateServiceDetail(Long id, ServiceDetailDTO updated) {
+        ServiceDetailEntity converted_ServiceDetailEntity, updated_ServiceDetailEntity = null;
+        try {
+
+                ServiceDetailDTO serviceDetailDto = getServiceDetailById(id);
+            converted_ServiceDetailEntity = ServiceDetailMapper.getInstance()
+                    .convertToEntity(serviceDetailDto.modifyValues(updated));
+            // converted_ClientEntity.setDateModification(DateHelper.now());
+            updated_ServiceDetailEntity = serviceDetailRepository.save(converted_ServiceDetailEntity);
+            updated = ServiceDetailMapper.getInstance().convertToDto(updated_ServiceDetailEntity);
+
+        } catch (Exception e) {
+            System.out.println("Erreur lors du ServiceDetail: " + e.getMessage());
+            updated = null;
+        }
+
+        return updated;
+    }
     
 }

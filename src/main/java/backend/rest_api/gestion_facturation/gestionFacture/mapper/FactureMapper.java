@@ -15,6 +15,9 @@ import backend.rest_api.gestion_facturation.gestionFacture.entity.FactureDetailE
 import backend.rest_api.gestion_facturation.gestionFacture.entity.FactureEntity;
 import backend.rest_api.gestion_facturation.gestionFacture.repository.FactureDetailRepository;
 import backend.rest_api.gestion_facturation.gestionServices.mapper.ServiceMapper;
+import backend.rest_api.gestion_facturation.gestionServices.dto.ServiceDetailDTO;
+import backend.rest_api.gestion_facturation.gestionServices.entity.ServiceDetailEntity;
+import backend.rest_api.gestion_facturation.gestionServices.mapper.ServiceDetailMapper;
 import backend.rest_api.gestion_facturation.helpers.DateHelper;
 
 @Component
@@ -49,6 +52,9 @@ public class FactureMapper {
         if (dto.getClient() != null) {
             entity.setIdClient(dto.getClient().getId());
         }
+        if (dto.getService() != null) {
+            entity.setIdService(dto.getService().getId());
+        }
         if (dto.getTva() != null) {
             entity.setIdTva(dto.getTva().getId());
         }
@@ -64,9 +70,9 @@ public class FactureMapper {
         FactureDetailDTO dto = new FactureDetailDTO();
 
         dto.setId(entity.getId());
-        if (entity.getService() != null) {
-            dto.setService(ServiceMapper.getInstance()
-                    .convertToDto(entity.getService()));
+        if (entity.getServiceDetail() != null) {
+            dto.setServiceDetail(ServiceDetailMapper.getInstance()
+                    .convertToDto(entity.getServiceDetail()));
         }
         dto.setDesignation(entity.getDesignation());
         dto.setQuantite(entity.getQuantite());
@@ -95,7 +101,11 @@ public class FactureMapper {
         dto.setReference(entity.getReference());
         dto.setDenominationClient(entity.getDenominationClient());
         dto.setCommentaire(entity.getCommentaire());
-        dto.setTypeStatut(staticValStatut);
+        if (staticValStatut != null) {
+            dto.setTypeStatut(staticValStatut);
+        } else {
+            dto.setTypeStatut(null);
+        }
         dto.setDateOperation(DateHelper.toText(entity.getDateOperation(), "time"));
         dto.setDateEcheance(DateHelper.toText(entity.getDateEcheance(), "time"));
         dto.setDateCreation(DateHelper.toText(entity.getDateCreation(), "time"));

@@ -23,9 +23,11 @@ public class DevisDetailMapper {
         DevisDetailEntity entity = new DevisDetailEntity();
 
         entity.setId(dto.getId());
-        if (dto.getService() != null) {
-            entity.setIdService(dto.getService().getId());
-        }
+        entity.setIdDevis(dto.getIdDevis());
+        entity.setIdService(dto.getId_service());
+        // if (dto.getService() != null) {
+        //     entity.setIdService(dto.getService().getId());
+        // }
         entity.setDesignation(dto.getDesignation());
         entity.setQuantite(dto.getQuantite());
         entity.setPrixUnitHt(dto.getPrixUnitHt());
@@ -39,6 +41,8 @@ public class DevisDetailMapper {
         DevisDetailDTO dto = new DevisDetailDTO();
 
         dto.setId(entity.getId());
+        dto.setIdDevis(entity.getIdDevis());
+        dto.setId_service(entity.getIdService());
         if (entity.getService() != null) {
             dto.setService(ServiceMapper.getInstance()
                     .convertToDto(entity.getService()));

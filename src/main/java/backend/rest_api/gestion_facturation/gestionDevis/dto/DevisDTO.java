@@ -30,8 +30,10 @@ public class DevisDTO {
         private String denominationClient;
         private String commentaire;
         private StaticValue typeStatut;
+        private Integer idTypeStatut;
         private String dateOperation;
         private ClientDTO client;
+        private Long idClient;
         private List<DevisDetailDTO> devisDetail;
         private TauxTvaDto tva;
         private Double tauxTva;
@@ -40,7 +42,7 @@ public class DevisDTO {
         private BigDecimal montantTotalTTC;
         private String dateCreation;
         private String dateModification;
-        private String idUtilisateurCreation;
+        private String idUtilisateurCreation;        
 
         public DevisDTO modifyValues(DevisDTO updated) {
 
