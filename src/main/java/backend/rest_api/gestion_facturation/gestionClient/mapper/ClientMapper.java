@@ -1,9 +1,12 @@
 package backend.rest_api.gestion_facturation.gestionClient.mapper;
 
+import org.springframework.stereotype.Component;
+
 import backend.rest_api.gestion_facturation.gestionClient.dto.ClientDTO;
 import backend.rest_api.gestion_facturation.gestionClient.entity.ClientEntity;
 import backend.rest_api.gestion_facturation.helpers.DateHelper;
 
+@Component
 public class ClientMapper {
 
     public ClientMapper() {
@@ -55,5 +58,4 @@ public class ClientMapper {
         return dto;
     }
 
-    
 }

@@ -113,12 +113,21 @@ public class BonDeLivraisonService {
                 dto.setTauxTva(null);
             }
             if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
+                dto.setMontantTotalHT(new BigDecimal(0.0));
+                dto.setMontantTva(new BigDecimal(dto.getTauxTva() * bonDeLivraisonDetailRepository
+                        .montantTotalBonDeLivraisonHT(dto.getId())
+                        / 100));
                 dto.setMontantTotalTTC(
-                        new BigDecimal((dto.getTauxTva() * bonDeLivraisonDetailRepository
-                                .montantTotalBonDeLivraisonHT(dto.getId())) / 100));
+                        new BigDecimal(bonDeLivraisonDetailRepository
+                                .montantTotalBonDeLivraisonHT(dto.getId())
+                                + ((dto.getTauxTva() * bonDeLivraisonDetailRepository
+                                        .montantTotalBonDeLivraisonHT(dto.getId()))
+                                        / 100)));
             } else {
                 dto.setMontantTotalHT(
                         new BigDecimal(bonDeLivraisonDetailRepository.montantTotalBonDeLivraisonHT(dto.getId())));
+                dto.setMontantTva(new BigDecimal(0.0));
+                dto.setMontantTotalTTC(new BigDecimal(0.0));
             }
 
             dtos.add(dto);
@@ -176,12 +185,21 @@ public class BonDeLivraisonService {
                 dto.setTauxTva(null);
             }
             if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
+                dto.setMontantTotalHT(new BigDecimal(0.0));
+                dto.setMontantTva(new BigDecimal(dto.getTauxTva() * bonDeLivraisonDetailRepository
+                        .montantTotalBonDeLivraisonHT(dto.getId())
+                        / 100));
                 dto.setMontantTotalTTC(
-                        new BigDecimal((dto.getTauxTva() * bonDeLivraisonDetailRepository
-                                .montantTotalBonDeLivraisonHT(dto.getId())) / 100));
+                        new BigDecimal(bonDeLivraisonDetailRepository
+                                .montantTotalBonDeLivraisonHT(dto.getId())
+                                + ((dto.getTauxTva() * bonDeLivraisonDetailRepository
+                                        .montantTotalBonDeLivraisonHT(dto.getId()))
+                                        / 100)));
             } else {
                 dto.setMontantTotalHT(
                         new BigDecimal(bonDeLivraisonDetailRepository.montantTotalBonDeLivraisonHT(dto.getId())));
+                dto.setMontantTva(new BigDecimal(0.0));
+                dto.setMontantTotalTTC(new BigDecimal(0.0));
             }
             return dto;
 

@@ -113,13 +113,23 @@ public class BonDeCommandeService {
                                 dto.setTauxTva(null);
                         }
                         if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
+                                dto.setMontantTotalHT(new BigDecimal(0.0));
+                                dto.setMontantTva(new BigDecimal(dto.getTauxTva() * bonDeCommandeDetailRepository
+                                                .montantTotalBonDeCommandeHT(dto.getId())
+                                                / 100));
                                 dto.setMontantTotalTTC(
-                                                new BigDecimal((dto.getTauxTva() * bonDeCommandeDetailRepository
-                                                                .montantTotalBonDeCommandeHT(dto.getId())) / 100));
+                                                new BigDecimal(bonDeCommandeDetailRepository
+                                                                .montantTotalBonDeCommandeHT(dto.getId())
+                                                                + ((dto.getTauxTva() * bonDeCommandeDetailRepository
+                                                                                .montantTotalBonDeCommandeHT(
+                                                                                                dto.getId()))
+                                                                                / 100)));
                         } else {
                                 dto.setMontantTotalHT(
                                                 new BigDecimal(bonDeCommandeDetailRepository
                                                                 .montantTotalBonDeCommandeHT(dto.getId())));
+                                dto.setMontantTva(new BigDecimal(0.0));
+                                dto.setMontantTotalTTC(new BigDecimal(0.0));
                         }
 
                         dtos.add(dto);
@@ -177,13 +187,23 @@ public class BonDeCommandeService {
                                 dto.setTauxTva(null);
                         }
                         if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
+                                dto.setMontantTotalHT(new BigDecimal(0.0));
+                                dto.setMontantTva(new BigDecimal(dto.getTauxTva() * bonDeCommandeDetailRepository
+                                                .montantTotalBonDeCommandeHT(dto.getId())
+                                                / 100));
                                 dto.setMontantTotalTTC(
-                                                new BigDecimal((dto.getTauxTva() * bonDeCommandeDetailRepository
-                                                                .montantTotalBonDeCommandeHT(dto.getId())) / 100));
+                                                new BigDecimal(bonDeCommandeDetailRepository
+                                                                .montantTotalBonDeCommandeHT(dto.getId())
+                                                                + ((dto.getTauxTva() * bonDeCommandeDetailRepository
+                                                                                .montantTotalBonDeCommandeHT(
+                                                                                                dto.getId()))
+                                                                                / 100)));
                         } else {
                                 dto.setMontantTotalHT(
                                                 new BigDecimal(bonDeCommandeDetailRepository
                                                                 .montantTotalBonDeCommandeHT(dto.getId())));
+                                dto.setMontantTva(new BigDecimal(0.0));
+                                dto.setMontantTotalTTC(new BigDecimal(0.0));
                         }
                         return dto;
 

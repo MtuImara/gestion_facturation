@@ -37,6 +37,7 @@ public class FactureDTO {
         private TauxTvaDto tva;
         private Double tauxTva;
         private BigDecimal montantTotalHT;
+        private BigDecimal montantTva;
         private BigDecimal montantTotalTTC;
         private String dateCreation;
         private String dateModification;

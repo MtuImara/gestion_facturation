@@ -5,8 +5,10 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -89,6 +91,39 @@ public class ClientController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> modifierClientController(@PathVariable(name = "id", required = true) Long id,
+            @RequestBody ClientDTO clientDto) {
+
+        Optional<ClientEntity> idOptional = clientRepository.findById(id);
+
+        Optional<ClientEntity> codeExist = clientRepository.verificationCode(id,
+                clientDto.getCode());
+
+        if (idOptional.isPresent()) {
+
+            if (codeExist.isPresent()) {
+                return new ResponseEntity<>(
+                        new ResponseHelper(("code " + clientDto.getCode() + " exist"), true),
+                        HttpStatus.BAD_REQUEST);
+            } else {
+                ClientDTO clientDto2 = clientService.updateClientService(id,
+                        clientDto);
+
+                return new ResponseEntity<>(
+                        new ResponseHelper(MessageHelper.updatedSuccessfully("Client"), clientDto2,
+                                true),
+                        HttpStatus.OK);
+            }
+
+        } else {
+            return new ResponseEntity<>(
+                    new ResponseHelper(MessageHelper.notFound("Client avec id: " + id), false),
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(path = "/{id}", method = RequestMethod.PATCH, consumes = {
+            MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<?> modifierController(@PathVariable(name = "id", required = true) Long id,
             @RequestBody ClientDTO clientDto) {
 
         Optional<ClientEntity> idOptional = clientRepository.findById(id);

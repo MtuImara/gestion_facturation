@@ -4,11 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(value = Include.NON_NULL)
 public class TauxTvaDto {
 
   private Long id;
