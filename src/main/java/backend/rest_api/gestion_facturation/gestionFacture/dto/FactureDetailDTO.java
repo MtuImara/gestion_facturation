@@ -20,25 +20,32 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FactureDetailDTO {
 
-    private Long id;
-    private Long idFacture;
-    private ServiceDetailDTO serviceDetail;
-    private Long idServiceDetail;
-    private String designation;
-    private Double quantite;
-    private Double prixUnitHt;
-    private BigDecimal montantHt;
+        private Long id;
+        private Long idFacture;
+        private ServiceDetailDTO serviceDetail;
+        private Long idServiceDetail;
+        private String designation;
+        private Double quantite;
+        private Double prixUnitHt;
+        private Double tauxTva;
+        private BigDecimal montantHt;
 
-    public FactureDetailDTO modifyValues(FactureDetailDTO updated) {
-        this.setServiceDetail(updated.getServiceDetail() != null ? updated.getServiceDetail() : this.getServiceDetail());
-        this.setDesignation(
-                updated.getDesignation() != null ? updated.getDesignation() : this.getDesignation());
-        this.setIdServiceDetail(updated.getIdServiceDetail() != null ? updated.getIdServiceDetail() : this.getIdServiceDetail());
-        this.setIdFacture(updated.getIdFacture() != null ? updated.getIdFacture() : this.getIdFacture());
-        this.setQuantite(updated.getQuantite() != null ? updated.getQuantite() : this.getQuantite());
-        this.setPrixUnitHt(updated.getPrixUnitHt() != null ? updated.getPrixUnitHt() : this.getPrixUnitHt());
+        public FactureDetailDTO modifyValues(FactureDetailDTO updated) {
+                this.setServiceDetail(
+                                updated.getServiceDetail() != null ? updated.getServiceDetail()
+                                                : this.getServiceDetail());
+                this.setDesignation(
+                                updated.getDesignation() != null ? updated.getDesignation() : this.getDesignation());
+                this.setIdServiceDetail(
+                                updated.getIdServiceDetail() != null ? updated.getIdServiceDetail()
+                                                : this.getIdServiceDetail());
+                this.setIdFacture(updated.getIdFacture() != null ? updated.getIdFacture() : this.getIdFacture());
+                this.setQuantite(updated.getQuantite() != null ? updated.getQuantite() : this.getQuantite());
+                this.setPrixUnitHt(updated.getPrixUnitHt() != null ? updated.getPrixUnitHt() : this.getPrixUnitHt());
+                this.setTauxTva(updated.getTauxTva() != null ? updated.getTauxTva() : this.getTauxTva());
+                this.setMontantHt(updated.getMontantHt() != null ? updated.getMontantHt() : this.getMontantHt());
 
-        return this;
-    }
+                return this;
+        }
 
 }

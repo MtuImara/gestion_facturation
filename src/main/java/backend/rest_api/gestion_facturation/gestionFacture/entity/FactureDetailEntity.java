@@ -1,6 +1,7 @@
 package backend.rest_api.gestion_facturation.gestionFacture.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -49,8 +50,14 @@ public class FactureDetailEntity implements Serializable {
     @Column(name = "quantite")
     private Double quantite;
 
+    @Column(name = "taux_tva")
+    private Double tauxTva;
+
     @Column(name = "prix_unit_ht")
     private Double prixUnitHt;
+
+    @Column(name = "prix_total")
+    private BigDecimal prixTotal;
 
     @Column(name = "id_facture", nullable = true)
     private Long idFacture;

@@ -6,8 +6,6 @@ import org.springframework.stereotype.Component;
 
 import backend.rest_api.gestion_facturation.gestionFacture.dto.FactureDetailDTO;
 import backend.rest_api.gestion_facturation.gestionFacture.entity.FactureDetailEntity;
-import backend.rest_api.gestion_facturation.gestionServices.dto.ServiceDetailDTO;
-import backend.rest_api.gestion_facturation.gestionServices.entity.ServiceDetailEntity;
 import backend.rest_api.gestion_facturation.gestionServices.mapper.ServiceDetailMapper;
 
 @Component
@@ -33,6 +31,13 @@ public class FactureDetailMapper {
         entity.setDesignation(dto.getDesignation());
         entity.setQuantite(dto.getQuantite());
         entity.setPrixUnitHt(dto.getPrixUnitHt());
+        entity.setTauxTva(dto.getTauxTva());
+        if (dto.getTauxTva() != null || dto.getTauxTva() == 0) {
+            entity.setPrixTotal(new BigDecimal((dto.getQuantite() * dto.getPrixUnitHt())
+                    + ((dto.getQuantite() * dto.getPrixUnitHt()) * dto.getTauxTva() / 100)));
+        } else {
+            entity.setPrixTotal(new BigDecimal((dto.getQuantite() * dto.getPrixUnitHt())));
+        }
 
         return entity;
 
@@ -52,8 +57,19 @@ public class FactureDetailMapper {
         dto.setDesignation(entity.getDesignation());
         dto.setQuantite(entity.getQuantite());
         dto.setPrixUnitHt(entity.getPrixUnitHt());
+        if (entity.getTauxTva() != null) {
+            dto.setTauxTva(entity.getTauxTva());
+        } else {
+            dto.setTauxTva(0.0);
+        }
+        dto.setMontantHt(entity.getPrixTotal());
 
-        dto.setMontantHt(new BigDecimal(dto.getQuantite() * dto.getPrixUnitHt()));
+        // if (entity.getTauxTva() != null) {
+        // dto.setMontantHt(new BigDecimal((dto.getQuantite() * dto.getPrixUnitHt()) *
+        // (dto.getTauxTva() / 100)));
+        // } else {
+        // dto.setMontantHt(new BigDecimal(dto.getQuantite() * dto.getPrixUnitHt()));
+        // }
 
         return dto;
 

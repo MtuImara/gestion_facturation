@@ -57,10 +57,10 @@ public class FactureMapper {
             entity.setIdService(dto.getService().getId());
         }
         entity.setIdService(dto.getId_service());
-        if (dto.getTva() != null) {
-            entity.setIdTva(dto.getTva().getId());
-        }
-        entity.setTauxTva(dto.getTauxTva());
+        // if (dto.getTva() != null) {
+        // entity.setIdTva(dto.getTva().getId());
+        // }
+        // entity.setTauxTva(dto.getTauxTva());
 
         return entity;
     }
@@ -88,12 +88,14 @@ public class FactureMapper {
 
         FactureDTO dto = new FactureDTO();
 
-        StaticValue staticValStatut = new StaticValue();
-        StaticListOfValues listOfValuesStatut = new StaticListOfValues();
-        staticValStatut.setKey(
-                listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey().trim());
-        staticValStatut.setValue(
-                listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getValue());
+        // StaticValue staticValStatut = new StaticValue();
+        // StaticListOfValues listOfValuesStatut = new StaticListOfValues();
+        // staticValStatut.setKey(
+        // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() -
+        // 1).getKey().trim());
+        // staticValStatut.setValue(
+        // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() -
+        // 1).getValue());
 
         dto.setId(entity.getId());
 
@@ -101,11 +103,11 @@ public class FactureMapper {
         dto.setReference(entity.getReference());
         dto.setDenominationClient(entity.getDenominationClient());
         dto.setCommentaire(entity.getCommentaire());
-        if (staticValStatut != null) {
-            dto.setTypeStatut(staticValStatut);
-        } else {
-            dto.setTypeStatut(null);
-        }
+        // if (staticValStatut != null) {
+        // dto.setTypeStatut(staticValStatut);
+        // } else {
+        // dto.setTypeStatut(null);
+        // }
         dto.setDateOperation(DateHelper.toText(entity.getDateOperation(), "time"));
         dto.setDateEcheance(DateHelper.toText(entity.getDateEcheance(), "time"));
         dto.setDateCreation(DateHelper.toText(entity.getDateCreation(), "time"));
@@ -119,18 +121,22 @@ public class FactureMapper {
         } else {
             dto.setFactureDetail(null);
         }
-        if (entity.getClient().getAssujettiTva() == true) {
-            dto.setTauxTva(entity.getTauxTva());
-        } else {
-            dto.setTauxTva(null);
-        }
-        if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
-            dto.setMontantTotalTTC(
-                    new BigDecimal(
-                            (dto.getTauxTva() * factureDetailRepository.montantTotalFactureHT(dto.getId())) / 100));
-        } else {
-            dto.setMontantTotalHT(new BigDecimal(factureDetailRepository.montantTotalFactureHT(dto.getId())));
-        }
+        // if (entity.getClient().getAssujettiTva() == true) {
+        // dto.setTauxTva(entity.getTauxTva());
+        // } else {
+        // dto.setTauxTva(null);
+        // }
+
+        // if (entity.getClient() != null && entity.getClient().getAssujettiTva() ==
+        // true) {
+        // dto.setMontantTotalTTC(
+        // new BigDecimal(
+        // (dto.getTauxTva() *
+        // factureDetailRepository.montantTotalFactureHT(dto.getId())) / 100));
+        // } else {
+        // dto.setMontantTotalHT(new
+        // BigDecimal(factureDetailRepository.montantTotalFactureHT(dto.getId())));
+        // }
 
         return dto;
     }

@@ -57,8 +57,15 @@ public class FactureService {
         dto.setDesignation(entity.getDesignation());
         dto.setQuantite(entity.getQuantite());
         dto.setPrixUnitHt(entity.getPrixUnitHt());
+        dto.setTauxTva(entity.getTauxTva());
+        dto.setMontantHt(entity.getPrixTotal());
 
-        dto.setMontantHt(new BigDecimal(dto.getQuantite() * dto.getPrixUnitHt()));
+        // if (entity.getTauxTva() == null || entity.getTauxTva() == 0.0) {
+        // dto.setMontantHt(new BigDecimal((dto.getQuantite() * dto.getPrixUnitHt())));
+        // } else {
+        // dto.setMontantHt(new BigDecimal((dto.getQuantite() * dto.getPrixUnitHt()) *
+        // (dto.getTauxTva() / 100)));
+        // }
 
         return dto;
 
@@ -123,23 +130,32 @@ public class FactureService {
             } else {
                 dto.setTauxTva(0.0);
             }
-            if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
-                dto.setMontantTotalHT(new BigDecimal(0.0));
-                dto.setMontantTva(new BigDecimal(dto.getTauxTva() * factureDetailRepository
-                        .montantTotalFactureHT(dto.getId())
-                        / 100));
-                dto.setMontantTotalTTC(
-                        new BigDecimal(factureDetailRepository
-                                .montantTotalFactureHT(dto.getId())
-                                + ((dto.getTauxTva() * factureDetailRepository
-                                        .montantTotalFactureHT(dto.getId()))
-                                        / 100)));
-            } else {
+            if (factureDetailRepository.montantTotalFactureHT(dto.getId()) != null
+                    || factureDetailRepository.montantTotalFactureHT(dto.getId()) == 0) {
                 dto.setMontantTotalHT(
                         new BigDecimal(factureDetailRepository.montantTotalFactureHT(dto.getId())));
-                dto.setMontantTva(new BigDecimal(0.00));
-                dto.setMontantTotalTTC(new BigDecimal(0.0));
+            } else {
+                dto.setMontantTotalHT(new BigDecimal(0.0));
             }
+
+            // if (entity.getClient() != null && entity.getClient().getAssujettiTva() ==
+            // true) {
+            // dto.setMontantTotalHT(new BigDecimal(0.0));
+            // dto.setMontantTva(new BigDecimal(dto.getTauxTva() * factureDetailRepository
+            // .montantTotalFactureHT(dto.getId())
+            // / 100));
+            // dto.setMontantTotalTTC(
+            // new BigDecimal(factureDetailRepository
+            // .montantTotalFactureHT(dto.getId())
+            // + ((dto.getTauxTva() * factureDetailRepository
+            // .montantTotalFactureHT(dto.getId()))
+            // / 100)));
+            // } else {
+            // dto.setMontantTotalHT(
+            // new BigDecimal(factureDetailRepository.montantTotalFactureHT(dto.getId())));
+            // dto.setMontantTva(new BigDecimal(0.00));
+            // dto.setMontantTotalTTC(new BigDecimal(0.0));
+            // }
 
             dtos.add(dto);
 
@@ -205,23 +221,29 @@ public class FactureService {
             } else {
                 dto.setTauxTva(0.0);
             }
-            if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
-                dto.setMontantTotalHT(new BigDecimal(0.0));
-                dto.setMontantTva(new BigDecimal(dto.getTauxTva() * factureDetailRepository
-                        .montantTotalFactureHT(dto.getId())
-                        / 100));
-                dto.setMontantTotalTTC(
-                        new BigDecimal(factureDetailRepository
-                                .montantTotalFactureHT(dto.getId())
-                                + ((dto.getTauxTva() * factureDetailRepository
-                                        .montantTotalFactureHT(dto.getId()))
-                                        / 100)));
-            } else {
+            if (factureDetailRepository.montantTotalFactureHT(dto.getId()) != null) {
                 dto.setMontantTotalHT(
                         new BigDecimal(factureDetailRepository.montantTotalFactureHT(dto.getId())));
-                dto.setMontantTva(new BigDecimal(0.00));
-                dto.setMontantTotalTTC(new BigDecimal(0.0));
             }
+
+            // if (entity.getClient() != null && entity.getClient().getAssujettiTva() ==
+            // true) {
+            // dto.setMontantTotalHT(new BigDecimal(0.0));
+            // dto.setMontantTva(new BigDecimal(dto.getTauxTva() * factureDetailRepository
+            // .montantTotalFactureHT(dto.getId())
+            // / 100));
+            // dto.setMontantTotalTTC(
+            // new BigDecimal(factureDetailRepository
+            // .montantTotalFactureHT(dto.getId())
+            // + ((dto.getTauxTva() * factureDetailRepository
+            // .montantTotalFactureHT(dto.getId()))
+            // / 100)));
+            // } else {
+            // dto.setMontantTotalHT(
+            // new BigDecimal(factureDetailRepository.montantTotalFactureHT(dto.getId())));
+            // dto.setMontantTva(new BigDecimal(0.00));
+            // dto.setMontantTotalTTC(new BigDecimal(0.0));
+            // }
 
             return dto;
 
@@ -397,7 +419,5 @@ public class FactureService {
 
         return updated;
     }
-
-    
 
 }
