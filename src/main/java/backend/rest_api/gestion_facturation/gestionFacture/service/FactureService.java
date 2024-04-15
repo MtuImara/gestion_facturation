@@ -104,6 +104,7 @@ public class FactureService {
             dto.setReference(entity.getReference());
             dto.setDenominationClient(entity.getDenominationClient());
             dto.setCommentaire(entity.getCommentaire());
+            dto.setEtat(entity.getEtat());
             // if (staticValStatut != null) {
             // dto.setTypeStatut(staticValStatut);
             // }
@@ -193,10 +194,9 @@ public class FactureService {
             dto.setReference(entity.getReference());
             dto.setDenominationClient(entity.getDenominationClient());
             dto.setCommentaire(entity.getCommentaire());
+            dto.setEtat(entity.getEtat());
             // if (staticValStatut != null) {
             // dto.setTypeStatut(staticValStatut);
-            // } else {
-            // dto.setTypeStatut(null);
             // }
             dto.setDateOperation(DateHelper.toText(entity.getDateOperation(), "time"));
             dto.setDateEcheance(DateHelper.toText(entity.getDateEcheance(), "time"));
@@ -221,9 +221,12 @@ public class FactureService {
             } else {
                 dto.setTauxTva(0.0);
             }
-            if (factureDetailRepository.montantTotalFactureHT(dto.getId()) != null) {
+            if (factureDetailRepository.montantTotalFactureHT(dto.getId()) != null
+                    || factureDetailRepository.montantTotalFactureHT(dto.getId()) == 0) {
                 dto.setMontantTotalHT(
                         new BigDecimal(factureDetailRepository.montantTotalFactureHT(dto.getId())));
+            } else {
+                dto.setMontantTotalHT(new BigDecimal(0.0));
             }
 
             // if (entity.getClient() != null && entity.getClient().getAssujettiTva() ==

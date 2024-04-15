@@ -243,4 +243,9 @@ public class GestionServicesController {
             return new ResponseEntity<>(new ResponseHelper(MessageHelper.noContent()), HttpStatus.OK);
         }
     }
+
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public long countRecords() {
+        return serviceDetailRepository.count();
+    }
 }

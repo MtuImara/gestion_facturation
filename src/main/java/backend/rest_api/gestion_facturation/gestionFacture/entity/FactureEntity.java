@@ -53,6 +53,9 @@ public class FactureEntity implements Serializable {
     @Column(name = "commentaire", nullable = true)
     private String commentaire;
 
+    @Column(name = "etat", nullable = true)
+    private String etat;
+
     @Column(name = "type_statut", length = 11)
     private Integer typeStatut;
 

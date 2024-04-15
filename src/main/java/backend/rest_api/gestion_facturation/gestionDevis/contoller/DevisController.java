@@ -126,15 +126,15 @@ public class DevisController {
                 .convertToEntity(dto);
 
         // if (serviceRepository.existsByCode(entity.getCode())) {
-        //     return new ResponseEntity<>(
-        //             new ResponseHelper(MessageHelper.dataExist("code"), false),
-        //             HttpStatus.BAD_REQUEST);
+        // return new ResponseEntity<>(
+        // new ResponseHelper(MessageHelper.dataExist("code"), false),
+        // HttpStatus.BAD_REQUEST);
         // } else {
-            DevisDetailDTO devisDetail = devisService
-                    .ajoutDevisDetailService(dto);
-            return new ResponseEntity<>(
-                    new ResponseHelper(MessageHelper.createdSuccessfully(), devisDetail, true),
-                    HttpStatus.CREATED);
+        DevisDetailDTO devisDetail = devisService
+                .ajoutDevisDetailService(dto);
+        return new ResponseEntity<>(
+                new ResponseHelper(MessageHelper.createdSuccessfully(), devisDetail, true),
+                HttpStatus.CREATED);
         // }
 
     }
@@ -198,30 +198,30 @@ public class DevisController {
         // Optional<ServiceEntity> serviceIdOptional = serviceRepository.findById(id);
 
         // Optional<ServiceEntity> codeExist = serviceRepository.verificationCode(id,
-        //         dto.getCode());
+        // dto.getCode());
 
         // if (serviceIdOptional.isPresent()) {
 
-        //     if (codeExist.isPresent()) {
-        //         return new ResponseEntity<>(
-        //                 new ResponseHelper(("code " + dto.getCode() + " exist"), false),
-        //                 HttpStatus.BAD_REQUEST);
-        //     } else {
-            DevisDetailDTO serviceDto = devisService.updateDevisDetail(id,
-                        dto);
+        // if (codeExist.isPresent()) {
+        // return new ResponseEntity<>(
+        // new ResponseHelper(("code " + dto.getCode() + " exist"), false),
+        // HttpStatus.BAD_REQUEST);
+        // } else {
+        DevisDetailDTO serviceDto = devisService.updateDevisDetail(id,
+                dto);
 
-                return new ResponseEntity<>(
-                        new ResponseHelper(MessageHelper.updatedSuccessfully("Detail Service"),
-                                serviceDto,
-                                true),
-                        HttpStatus.OK);
-    //         }
+        return new ResponseEntity<>(
+                new ResponseHelper(MessageHelper.updatedSuccessfully("Detail Service"),
+                        serviceDto,
+                        true),
+                HttpStatus.OK);
+        // }
 
-    //     } else {
-    //         return new ResponseEntity<>(
-    //                 new ResponseHelper(MessageHelper.notFound("id: " + id), false),
-    //                 HttpStatus.NOT_FOUND);
-    //     }
+        // } else {
+        // return new ResponseEntity<>(
+        // new ResponseHelper(MessageHelper.notFound("id: " + id), false),
+        // HttpStatus.NOT_FOUND);
+        // }
     }
 
     @RequestMapping(value = "/delete_detail/{id}", method = RequestMethod.DELETE)
@@ -243,5 +243,10 @@ public class DevisController {
         }
 
     }
-    
+
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public long countRecords() {
+        return devisRepository.count();
+    }
+
 }

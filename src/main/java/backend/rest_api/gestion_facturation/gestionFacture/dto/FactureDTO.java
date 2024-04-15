@@ -30,6 +30,7 @@ public class FactureDTO {
         private String reference;
         private String denominationClient;
         private String commentaire;
+        private String etat;
         private StaticValue typeStatut;
         private String dateOperation;
         private String dateEcheance;
@@ -57,6 +58,7 @@ public class FactureDTO {
                                 : this.getDenominationClient());
                 this.setCommentaire(updated.getCommentaire() != null ? updated.getCommentaire()
                                 : this.getCommentaire());
+                this.setEtat(updated.getEtat() != null ? updated.getEtat() : this.getEtat());
                 this.setTypeStatut(updated.getTypeStatut() != null ? updated.getTypeStatut() : this.getTypeStatut());
                 this.setDateOperation(
                                 updated.getDateOperation() != null ? updated.getDateOperation()

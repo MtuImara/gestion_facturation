@@ -229,4 +229,9 @@ public class FactureController {
 
     }
 
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public long countRecords() {
+        return factureRepository.count();
+    }
+
 }

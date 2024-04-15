@@ -174,4 +174,9 @@ public class ClientController {
 
     }
 
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public long countRecords() {
+        return clientRepository.count();
+    }
+
 }
