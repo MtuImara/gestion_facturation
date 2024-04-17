@@ -3,6 +3,8 @@ package backend.rest_api.gestion_facturation.gestionDevis.dto;
 import java.math.BigDecimal;
 
 import backend.rest_api.gestion_facturation.gestionServices.dto.ServiceDTO;
+import backend.rest_api.gestion_facturation.gestionServices.dto.ServiceDetailDTO;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -22,21 +24,28 @@ public class DevisDetailDTO {
 
     private Long id;
     private Long idDevis;
-    private ServiceDTO service;
-    private Long id_service;
+    private ServiceDetailDTO serviceDetail;
+    private Long idServiceDetail;
     private String designation;
     private Double quantite;
     private Double prixUnitHt;
+    private Double tauxTva;
     private BigDecimal montantHt;
 
     public DevisDetailDTO modifyValues(DevisDetailDTO updated) {
-        this.setService(updated.getService() != null ? updated.getService() : this.getService());
+        this.setServiceDetail(
+                updated.getServiceDetail() != null ? updated.getServiceDetail()
+                        : this.getServiceDetail());
         this.setDesignation(
                 updated.getDesignation() != null ? updated.getDesignation() : this.getDesignation());
+        this.setIdServiceDetail(
+                updated.getIdServiceDetail() != null ? updated.getIdServiceDetail()
+                        : this.getIdServiceDetail());
+        this.setIdDevis(updated.getIdDevis() != null ? updated.getIdDevis() : this.getIdDevis());
         this.setQuantite(updated.getQuantite() != null ? updated.getQuantite() : this.getQuantite());
         this.setPrixUnitHt(updated.getPrixUnitHt() != null ? updated.getPrixUnitHt() : this.getPrixUnitHt());
-        this.setIdDevis(updated.getIdDevis() != null ? updated.getIdDevis() : this.getIdDevis());
-        this.setId_service(updated.getId_service() != null ? updated.getId_service() : this.getId_service());
+        this.setTauxTva(updated.getTauxTva() != null ? updated.getTauxTva() : this.getTauxTva());
+        this.setMontantHt(updated.getMontantHt() != null ? updated.getMontantHt() : this.getMontantHt());
 
         return this;
     }

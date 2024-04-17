@@ -289,7 +289,7 @@ public class FactureService {
                 FactureDetailEntity detailEntity = FactureDetailMapper.getInstance()
                         .convertToEntity(service_detail);
 
-                detailEntity.setIdServiceDetail(entity.getId());
+                detailEntity.setIdFacture(entity.getId());
 
                 factureDetailRepository.save(detailEntity);
             }
@@ -327,7 +327,7 @@ public class FactureService {
                 FactureDetailEntity rfd = FactureDetailMapper.getInstance()
                         .convertToEntity(service_detail);
 
-                rfd.setIdServiceDetail(updated_Entity.getId());
+                rfd.setIdFacture(updated_Entity.getId());
 
                 factureDetailRepository.save(rfd);
             }

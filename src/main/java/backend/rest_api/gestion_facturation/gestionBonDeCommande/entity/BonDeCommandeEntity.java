@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import backend.rest_api.gestion_facturation.gestionClient.entity.ClientEntity;
+import backend.rest_api.gestion_facturation.gestionServices.entity.ServiceEntity;
 import backend.rest_api.gestion_facturation.gestionTVA.entity.TauxTvaEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,12 +53,19 @@ public class BonDeCommandeEntity implements Serializable {
     @Column(name = "commentaire", nullable = true)
     private String commentaire;
 
+    @Column(name = "etat", nullable = true)
+    private String etat;
+
     @Column(name = "type_statut", length = 11)
     private Integer typeStatut;
 
     @Column(name = "date_operation")
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date dateOperation;
+
+    @Column(name = "date_echeance")
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    private Date dateEcheance;
 
     @Column(name = "id_client", nullable = true)
     private Long idClient;
@@ -66,6 +74,14 @@ public class BonDeCommandeEntity implements Serializable {
     @JsonIgnore
     @JoinColumn(name = "id_client", referencedColumnName = "id", insertable = false, updatable = false, nullable = false)
     private ClientEntity client;
+
+    @Column(name = "id_service", nullable = true)
+    private Long idService;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinColumn(name = "id_service", referencedColumnName = "id", insertable = false, updatable = false, nullable = false)
+    private ServiceEntity service;
 
     @Column(name = "id_tva", nullable = true)
     private Long idTva;

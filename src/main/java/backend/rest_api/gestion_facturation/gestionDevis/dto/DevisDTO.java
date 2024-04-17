@@ -5,6 +5,7 @@ import java.util.List;
 
 import backend.rest_api.gestion_facturation.constantes.StaticValue;
 import backend.rest_api.gestion_facturation.gestionClient.dto.ClientDTO;
+import backend.rest_api.gestion_facturation.gestionServices.dto.ServiceDTO;
 import backend.rest_api.gestion_facturation.gestionTVA.dto.TauxTvaDto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -29,11 +30,14 @@ public class DevisDTO {
         private String reference;
         private String denominationClient;
         private String commentaire;
+        private String etat;
         private StaticValue typeStatut;
         private Integer idTypeStatut;
         private String dateOperation;
         private ClientDTO client;
         private Long idClient;
+        private ServiceDTO service;
+        private Long id_service;
         private List<DevisDetailDTO> devisDetail;
         private TauxTvaDto tva;
         private Double tauxTva;
@@ -42,7 +46,7 @@ public class DevisDTO {
         private BigDecimal montantTotalTTC;
         private String dateCreation;
         private String dateModification;
-        private String idUtilisateurCreation;        
+        private String idUtilisateurCreation;
 
         public DevisDTO modifyValues(DevisDTO updated) {
 
@@ -58,6 +62,8 @@ public class DevisDTO {
                                 updated.getDateOperation() != null ? updated.getDateOperation()
                                                 : this.getDateOperation());
                 this.setClient(updated.getClient() != null ? updated.getClient() : this.getClient());
+                this.setService(updated.getService() != null ? updated.getService() : this.getService());
+                this.setId_service(updated.getId_service() != null ? updated.getId_service() : this.getId_service());
                 this.setDevisDetail(updated.getDevisDetail() != null ? updated.getDevisDetail()
                                 : this.getDevisDetail());
                 this.setTva(updated.getTva() != null ? updated.getTva() : this.getTva());
@@ -66,6 +72,7 @@ public class DevisDTO {
                                 : this.getDateCreation());
                 this.setDateModification(updated.getDateModification() != null ? updated.getDateModification()
                                 : this.getDateModification());
+                this.setEtat(updated.getEtat() != null ? updated.getEtat() : this.getEtat());
                 this.setIdUtilisateurCreation(
                                 updated.getIdUtilisateurCreation() != null ? updated.getIdUtilisateurCreation()
                                                 : this.getIdUtilisateurCreation());

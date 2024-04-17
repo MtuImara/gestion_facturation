@@ -14,6 +14,7 @@ import backend.rest_api.gestion_facturation.gestionBonDeCommande.entity.BonDeCom
 import backend.rest_api.gestion_facturation.gestionBonDeCommande.entity.BonDeCommandeEntity;
 import backend.rest_api.gestion_facturation.gestionBonDeCommande.repository.BonDeCommandeDetailRepository;
 import backend.rest_api.gestion_facturation.gestionClient.mapper.ClientMapper;
+import backend.rest_api.gestion_facturation.gestionServices.mapper.ServiceDetailMapper;
 import backend.rest_api.gestion_facturation.gestionServices.mapper.ServiceMapper;
 import backend.rest_api.gestion_facturation.helpers.DateHelper;
 
@@ -39,21 +40,25 @@ public class BonDeCommandeMapper {
         entity.setReference(dto.getReference());
         entity.setDenominationClient(dto.getDenominationClient());
         entity.setCommentaire(dto.getCommentaire());
-        if (dto.getTypeStatut() != null) {
-            entity.setTypeStatut(Integer.parseInt(dto.getTypeStatut().getKey()));
-        }
+        entity.setEtat(dto.getEtat());
+        // if (dto.getTypeStatut() != null) {
+        // entity.setTypeStatut(Integer.parseInt(dto.getTypeStatut().getKey()));
+        // }
         entity.setDateOperation(DateHelper.toDate(dto.getDateOperation()));
         entity.setDateCreation(DateHelper.toDate(dto.getDateCreation()));
         entity.setDateModification(DateHelper.toDate(dto.getDateModification()));
-        if (dto.getClient() != null) {
-            entity.setIdClient(dto.getClient().getId());
-        }
-        if (dto.getTva() != null) {
-            entity.setIdTva(dto.getTva().getId());
-        }
-        if (dto.getClient().getAssujettiTva() == true) {
-            entity.setTauxTva(dto.getTva().getTaux());
-        }
+        // if (dto.getClient() != null) {
+        // entity.setIdClient(dto.getClient().getId());
+        // }
+        entity.setIdClient(dto.getIdClient());
+        // if (dto.getService() != null) {
+        // entity.setIdService(dto.getService().getId());
+        // }
+        entity.setIdService(dto.getId_service());
+        // if (dto.getTva() != null) {
+        // entity.setIdTva(dto.getTva().getId());
+        // }
+        // entity.setTauxTva(dto.getTauxTva());
 
         return entity;
     }
@@ -63,9 +68,9 @@ public class BonDeCommandeMapper {
         BonDeCommandeDetailDTO dto = new BonDeCommandeDetailDTO();
 
         dto.setId(entity.getId());
-        if (entity.getService() != null) {
-            dto.setService(ServiceMapper.getInstance()
-                    .convertToDto(entity.getService()));
+        if (entity.getServiceDetail() != null) {
+            dto.setServiceDetail(ServiceDetailMapper.getInstance()
+                    .convertToDto(entity.getServiceDetail()));
         }
         dto.setDesignation(entity.getDesignation());
         dto.setQuantite(entity.getQuantite());
@@ -81,12 +86,14 @@ public class BonDeCommandeMapper {
 
         BonDeCommandeDTO dto = new BonDeCommandeDTO();
 
-        StaticValue staticValStatut = new StaticValue();
-        StaticListOfValues listOfValuesStatut = new StaticListOfValues();
-        staticValStatut.setKey(
-                listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey().trim());
-        staticValStatut.setValue(
-                listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getValue());
+        // StaticValue staticValStatut = new StaticValue();
+        // StaticListOfValues listOfValuesStatut = new StaticListOfValues();
+        // staticValStatut.setKey(
+        // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() -
+        // 1).getKey().trim());
+        // staticValStatut.setValue(
+        // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() -
+        // 1).getValue());
 
         dto.setId(entity.getId());
 
@@ -94,7 +101,12 @@ public class BonDeCommandeMapper {
         dto.setReference(entity.getReference());
         dto.setDenominationClient(entity.getDenominationClient());
         dto.setCommentaire(entity.getCommentaire());
-        dto.setTypeStatut(staticValStatut);
+        dto.setEtat(entity.getEtat());
+        // if (staticValStatut != null) {
+        // dto.setTypeStatut(staticValStatut);
+        // } else {
+        // dto.setTypeStatut(null);
+        // }
         dto.setDateOperation(DateHelper.toText(entity.getDateOperation(), "time"));
         dto.setDateCreation(DateHelper.toText(entity.getDateCreation(), "time"));
         dto.setDateModification(DateHelper.toText(entity.getDateModification(), "time"));
@@ -108,20 +120,22 @@ public class BonDeCommandeMapper {
         } else {
             dto.setBonDeCommandeDetail(null);
         }
-        if (entity.getClient().getAssujettiTva() == true) {
-            dto.setTauxTva(entity.getTauxTva());
-        } else {
-            dto.setTauxTva(null);
-        }
-        if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
-            dto.setMontantTotalTTC(
-                    new BigDecimal(
-                            (dto.getTauxTva() * bonDeCommandeDetailRepository.montantTotalBonDeCommandeHT(dto.getId()))
-                                    / 100));
-        } else {
-            dto.setMontantTotalHT(
-                    new BigDecimal(bonDeCommandeDetailRepository.montantTotalBonDeCommandeHT(dto.getId())));
-        }
+        // if (entity.getClient().getAssujettiTva() == true) {
+        // dto.setTauxTva(entity.getTauxTva());
+        // } else {
+        // dto.setTauxTva(null);
+        // }
+
+        // if (entity.getClient() != null && entity.getClient().getAssujettiTva() ==
+        // true) {
+        // dto.setMontantTotalTTC(
+        // new BigDecimal(
+        // (dto.getTauxTva() *
+        // factureDetailRepository.montantTotalFactureHT(dto.getId())) / 100));
+        // } else {
+        // dto.setMontantTotalHT(new
+        // BigDecimal(factureDetailRepository.montantTotalFactureHT(dto.getId())));
+        // }
 
         return dto;
     }

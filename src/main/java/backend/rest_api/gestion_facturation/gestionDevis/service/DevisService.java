@@ -22,6 +22,7 @@ import backend.rest_api.gestion_facturation.gestionDevis.mapper.DevisDetailMappe
 import backend.rest_api.gestion_facturation.gestionDevis.mapper.DevisMapper;
 import backend.rest_api.gestion_facturation.gestionDevis.repository.DevisDetailRepository;
 import backend.rest_api.gestion_facturation.gestionDevis.repository.DevisRepository;
+import backend.rest_api.gestion_facturation.gestionServices.mapper.ServiceDetailMapper;
 import backend.rest_api.gestion_facturation.gestionServices.mapper.ServiceMapper;
 import backend.rest_api.gestion_facturation.helpers.DateHelper;
 import backend.rest_api.gestion_facturation.helpers.PagingAndSortingHelper;
@@ -47,15 +48,17 @@ public class DevisService {
                 DevisDetailDTO dto = new DevisDetailDTO();
 
                 dto.setId(entity.getId());
-                if (entity.getService() != null) {
-                        dto.setService(ServiceMapper.getInstance()
-                                        .convertToDto(entity.getService()));
+                if (entity.getServiceDetail() != null) {
+                        dto.setServiceDetail(ServiceDetailMapper.getInstance()
+                                        .convertToDto(entity.getServiceDetail()));
                 }
+                dto.setIdServiceDetail(entity.getIdServiceDetail());
+                dto.setIdDevis(entity.getIdDevis());
                 dto.setDesignation(entity.getDesignation());
                 dto.setQuantite(entity.getQuantite());
                 dto.setPrixUnitHt(entity.getPrixUnitHt());
-
-                dto.setMontantHt(new BigDecimal(dto.getQuantite() * dto.getPrixUnitHt()));
+                dto.setTauxTva(entity.getTauxTva());
+                dto.setMontantHt(entity.getPrixTotal());
 
                 return dto;
 
@@ -82,10 +85,11 @@ public class DevisService {
                         // StaticValue staticValStatut = new StaticValue();
                         // StaticListOfValues listOfValuesStatut = new StaticListOfValues();
                         // staticValStatut.setKey(
-                        //                 listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey()
-                        //                                 .trim());
+                        // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey()
+                        // .trim());
                         // staticValStatut.setValue(
-                        //                 listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getValue());
+                        // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() -
+                        // 1).getValue());
 
                         dto.setId(entity.getId());
 
@@ -93,41 +97,60 @@ public class DevisService {
                         dto.setReference(entity.getReference());
                         dto.setDenominationClient(entity.getDenominationClient());
                         dto.setCommentaire(entity.getCommentaire());
+                        dto.setEtat(entity.getEtat());
+                        // if (staticValStatut != null) {
                         // dto.setTypeStatut(staticValStatut);
+                        // }
                         dto.setDateOperation(DateHelper.toText(entity.getDateOperation(), "time"));
                         dto.setDateCreation(DateHelper.toText(entity.getDateCreation(), "time"));
                         dto.setDateModification(DateHelper.toText(entity.getDateModification(), "time"));
                         if (entity.getClient() != null) {
                                 dto.setClient(ClientMapper.getInstance().convertToDto(entity.getClient()));
                         }
+                        dto.setIdClient(entity.getIdClient());
                         if (entity.getDevisDetail() != null) {
-                                dto.setDevisDetail(entity.getDevisDetail().stream().map(this::devisDetailConvertToDto)
-                                                .collect(Collectors.toList()));
+                                dto.setDevisDetail(
+                                                entity.getDevisDetail().stream().map(this::devisDetailConvertToDto)
+                                                                .collect(Collectors.toList()));
                         } else {
                                 dto.setDevisDetail(null);
                         }
+                        if (entity.getService() != null) {
+                                dto.setService(ServiceMapper.getInstance().convertToDto(entity.getService()));
+                        }
+                        dto.setId_service(entity.getIdService());
                         if (entity.getClient().getAssujettiTva() == true) {
                                 dto.setTauxTva(entity.getTauxTva());
                         } else {
                                 dto.setTauxTva(0.0);
                         }
-                        if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
-                                dto.setMontantTotalHT(new BigDecimal(0.0));
-                                dto.setMontantTva(new BigDecimal(dto.getTauxTva() * devisDetailRepository
-                                                .montantTotalDevisHT(dto.getId())
-                                                / 100));
-                                dto.setMontantTotalTTC(
-                                                new BigDecimal(devisDetailRepository
-                                                                .montantTotalDevisHT(dto.getId())
-                                                                + ((dto.getTauxTva() * devisDetailRepository
-                                                                                .montantTotalDevisHT(dto.getId()))
-                                                                                / 100)));
-                        } else {
+                        if (devisDetailRepository.montantTotalDevisHT(dto.getId()) != null
+                                        || devisDetailRepository.montantTotalDevisHT(dto.getId()) == 0) {
                                 dto.setMontantTotalHT(
-                                                new BigDecimal(devisDetailRepository.montantTotalDevisHT(dto.getId())));
-                                dto.setMontantTva(new BigDecimal(0.00));
-                                dto.setMontantTotalTTC(new BigDecimal(0.0));
+                                                new BigDecimal(devisDetailRepository
+                                                                .montantTotalDevisHT(dto.getId())));
+                        } else {
+                                dto.setMontantTotalHT(new BigDecimal(0.0));
                         }
+
+                        // if (entity.getClient() != null && entity.getClient().getAssujettiTva() ==
+                        // true) {
+                        // dto.setMontantTotalHT(new BigDecimal(0.0));
+                        // dto.setMontantTva(new BigDecimal(dto.getTauxTva() * factureDetailRepository
+                        // .montantTotalFactureHT(dto.getId())
+                        // / 100));
+                        // dto.setMontantTotalTTC(
+                        // new BigDecimal(factureDetailRepository
+                        // .montantTotalFactureHT(dto.getId())
+                        // + ((dto.getTauxTva() * factureDetailRepository
+                        // .montantTotalFactureHT(dto.getId()))
+                        // / 100)));
+                        // } else {
+                        // dto.setMontantTotalHT(
+                        // new BigDecimal(factureDetailRepository.montantTotalFactureHT(dto.getId())));
+                        // dto.setMontantTva(new BigDecimal(0.00));
+                        // dto.setMontantTotalTTC(new BigDecimal(0.0));
+                        // }
 
                         dtos.add(dto);
 
@@ -153,10 +176,11 @@ public class DevisService {
                         // StaticValue staticValStatut = new StaticValue();
                         // StaticListOfValues listOfValuesStatut = new StaticListOfValues();
                         // staticValStatut.setKey(
-                        //                 listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey()
-                        //                                 .trim());
+                        // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey()
+                        // .trim());
                         // staticValStatut.setValue(
-                        //                 listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getValue());
+                        // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() -
+                        // 1).getValue());
 
                         dto.setId(entity.getId());
 
@@ -164,41 +188,60 @@ public class DevisService {
                         dto.setReference(entity.getReference());
                         dto.setDenominationClient(entity.getDenominationClient());
                         dto.setCommentaire(entity.getCommentaire());
+                        dto.setEtat(entity.getEtat());
+                        // if (staticValStatut != null) {
                         // dto.setTypeStatut(staticValStatut);
+                        // }
                         dto.setDateOperation(DateHelper.toText(entity.getDateOperation(), "time"));
                         dto.setDateCreation(DateHelper.toText(entity.getDateCreation(), "time"));
                         dto.setDateModification(DateHelper.toText(entity.getDateModification(), "time"));
                         if (entity.getClient() != null) {
                                 dto.setClient(ClientMapper.getInstance().convertToDto(entity.getClient()));
                         }
+                        dto.setIdClient(entity.getIdClient());
                         if (entity.getDevisDetail() != null) {
-                                dto.setDevisDetail(entity.getDevisDetail().stream().map(this::devisDetailConvertToDto)
-                                                .collect(Collectors.toList()));
+                                dto.setDevisDetail(
+                                                entity.getDevisDetail().stream().map(this::devisDetailConvertToDto)
+                                                                .collect(Collectors.toList()));
                         } else {
                                 dto.setDevisDetail(null);
                         }
+                        if (entity.getService() != null) {
+                                dto.setService(ServiceMapper.getInstance().convertToDto(entity.getService()));
+                        }
+                        dto.setId_service(entity.getIdService());
                         if (entity.getClient().getAssujettiTva() == true) {
                                 dto.setTauxTva(entity.getTauxTva());
                         } else {
                                 dto.setTauxTva(0.0);
                         }
-                        if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
-                                dto.setMontantTotalHT(new BigDecimal(0.0));
-                                dto.setMontantTva(new BigDecimal(dto.getTauxTva() * devisDetailRepository
-                                                .montantTotalDevisHT(dto.getId())
-                                                / 100));
-                                dto.setMontantTotalTTC(
-                                                new BigDecimal(devisDetailRepository
-                                                                .montantTotalDevisHT(dto.getId())
-                                                                + ((dto.getTauxTva() * devisDetailRepository
-                                                                                .montantTotalDevisHT(dto.getId()))
-                                                                                / 100)));
-                        } else {
+                        if (devisDetailRepository.montantTotalDevisHT(dto.getId()) != null
+                                        || devisDetailRepository.montantTotalDevisHT(dto.getId()) == 0) {
                                 dto.setMontantTotalHT(
-                                                new BigDecimal(devisDetailRepository.montantTotalDevisHT(dto.getId())));
-                                dto.setMontantTva(new BigDecimal(0.0));
-                                dto.setMontantTotalTTC(new BigDecimal(0.0));
+                                                new BigDecimal(devisDetailRepository
+                                                                .montantTotalDevisHT(dto.getId())));
+                        } else {
+                                dto.setMontantTotalHT(new BigDecimal(0.0));
                         }
+
+                        // if (entity.getClient() != null && entity.getClient().getAssujettiTva() ==
+                        // true) {
+                        // dto.setMontantTotalHT(new BigDecimal(0.0));
+                        // dto.setMontantTva(new BigDecimal(dto.getTauxTva() * factureDetailRepository
+                        // .montantTotalFactureHT(dto.getId())
+                        // / 100));
+                        // dto.setMontantTotalTTC(
+                        // new BigDecimal(factureDetailRepository
+                        // .montantTotalFactureHT(dto.getId())
+                        // + ((dto.getTauxTva() * factureDetailRepository
+                        // .montantTotalFactureHT(dto.getId()))
+                        // / 100)));
+                        // } else {
+                        // dto.setMontantTotalHT(
+                        // new BigDecimal(factureDetailRepository.montantTotalFactureHT(dto.getId())));
+                        // dto.setMontantTva(new BigDecimal(0.00));
+                        // dto.setMontantTotalTTC(new BigDecimal(0.0));
+                        // }
                         return dto;
 
                 } catch (Exception e) {
@@ -207,20 +250,20 @@ public class DevisService {
                 }
         }
 
-    public DevisDetailDTO getDevisDetailById(Long id) {
+        public DevisDetailDTO getDevisDetailById(Long id) {
 
                 DevisDetailEntity devisDetailEntity = null;
-        try {
-                devisDetailEntity = devisDetailRepository.getReferenceById(id);
-                DevisDetailDTO devisDetailDto = DevisDetailMapper
-                    .getInstance()
-                    .convertToDto(devisDetailEntity);
-            return devisDetailDto;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return null;
+                try {
+                        devisDetailEntity = devisDetailRepository.getReferenceById(id);
+                        DevisDetailDTO devisDetailDto = DevisDetailMapper
+                                        .getInstance()
+                                        .convertToDto(devisDetailEntity);
+                        return devisDetailDto;
+                } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                        return null;
+                }
         }
-    }
 
         public DevisDTO ajoutDevisService(DevisDTO dto) {
 
@@ -240,7 +283,7 @@ public class DevisService {
                                 DevisDetailEntity detailEntity = DevisDetailMapper.getInstance()
                                                 .convertToEntity(service_detail);
 
-                                detailEntity.setIdService(entity.getId());
+                                detailEntity.setIdServiceDetail(entity.getId());
 
                                 devisDetailRepository.save(detailEntity);
                         }
@@ -278,7 +321,7 @@ public class DevisService {
                                 DevisDetailEntity rfd = DevisDetailMapper.getInstance()
                                                 .convertToEntity(service_detail);
 
-                                rfd.setIdService(updated_Entity.getId());
+                                rfd.setIdServiceDetail(updated_Entity.getId());
 
                                 devisDetailRepository.save(rfd);
                         }
@@ -294,85 +337,84 @@ public class DevisService {
                 return updated;
         }
 
-
         // Ajout et Modification des données séparées
-    
-    public DevisDTO ajouter(DevisDTO devisDto) {
 
-        try {
-                DevisEntity devisEntity = new DevisEntity();
-                devisEntity = DevisMapper.getInstance()
-                    .convertToEntity(devisDto);
-                    devisEntity.setDateCreation(DateHelper.now());
-                DevisEntity creationDevis = devisRepository.save(devisEntity);
+        public DevisDTO ajouter(DevisDTO devisDto) {
 
-                devisDto = creationDevis != null
-                    ? DevisMapper.getInstance().convertToDto(creationDevis)
-                    : null;
-        } catch (Exception ex) {
-                devisDto = null;
-            System.out.println("null" + ex.getMessage());
+                try {
+                        DevisEntity devisEntity = new DevisEntity();
+                        devisEntity = DevisMapper.getInstance()
+                                        .convertToEntity(devisDto);
+                        devisEntity.setDateCreation(DateHelper.now());
+                        DevisEntity creationDevis = devisRepository.save(devisEntity);
+
+                        devisDto = creationDevis != null
+                                        ? DevisMapper.getInstance().convertToDto(creationDevis)
+                                        : null;
+                } catch (Exception ex) {
+                        devisDto = null;
+                        System.out.println("null" + ex.getMessage());
+                }
+
+                return devisDto;
         }
 
-        return devisDto;
-    }
+        public DevisDetailDTO ajoutDevisDetailService(DevisDetailDTO devisDetailDto) {
 
-    public DevisDetailDTO ajoutDevisDetailService(DevisDetailDTO devisDetailDto) {
+                try {
+                        DevisDetailEntity devisDetailEntity = new DevisDetailEntity();
+                        devisDetailEntity = DevisDetailMapper.getInstance()
+                                        .convertToEntity(devisDetailDto);
+                        // serviceDetailEntity.setDateCreation(DateHelper.now());
+                        DevisDetailEntity creationDevisDetail = devisDetailRepository.save(devisDetailEntity);
 
-        try {
-                DevisDetailEntity devisDetailEntity = new DevisDetailEntity();
-                devisDetailEntity = DevisDetailMapper.getInstance()
-                    .convertToEntity(devisDetailDto);
-                //     serviceDetailEntity.setDateCreation(DateHelper.now());
-                DevisDetailEntity creationDevisDetail = devisDetailRepository.save(devisDetailEntity);
+                        devisDetailDto = creationDevisDetail != null
+                                        ? DevisDetailMapper.getInstance().convertToDto(creationDevisDetail)
+                                        : null;
+                } catch (Exception ex) {
+                        devisDetailDto = null;
+                        System.out.println("null" + ex.getMessage());
+                }
 
-                devisDetailDto = creationDevisDetail != null
-                    ? DevisDetailMapper.getInstance().convertToDto(creationDevisDetail)
-                    : null;
-        } catch (Exception ex) {
-                devisDetailDto = null;
-            System.out.println("null" + ex.getMessage());
+                return devisDetailDto;
         }
 
-        return devisDetailDto;
-    }
+        public DevisDTO update(Long id, DevisDTO updated) {
+                DevisEntity converted_DevisEntity, updated_DevisEntity = null;
+                try {
 
-    public DevisDTO update(Long id, DevisDTO updated) {
-        DevisEntity converted_DevisEntity, updated_DevisEntity = null;
-        try {
+                        DevisDTO serviceDto = getById(id);
+                        converted_DevisEntity = DevisMapper.getInstance()
+                                        .convertToEntity(serviceDto.modifyValues(updated));
+                        // converted_ClientEntity.setDateModification(DateHelper.now());
+                        updated_DevisEntity = devisRepository.save(converted_DevisEntity);
+                        updated = DevisMapper.getInstance().convertToDto(updated_DevisEntity);
 
-                DevisDTO serviceDto = getById(id);
-            converted_DevisEntity = DevisMapper.getInstance()
-                    .convertToEntity(serviceDto.modifyValues(updated));
-            // converted_ClientEntity.setDateModification(DateHelper.now());
-            updated_DevisEntity = devisRepository.save(converted_DevisEntity);
-            updated = DevisMapper.getInstance().convertToDto(updated_DevisEntity);
+                } catch (Exception e) {
+                        System.out.println("Erreur lors du Service: " + e.getMessage());
+                        updated = null;
+                }
 
-        } catch (Exception e) {
-            System.out.println("Erreur lors du Service: " + e.getMessage());
-            updated = null;
+                return updated;
         }
 
-        return updated;
-    }
+        public DevisDetailDTO updateDevisDetail(Long id, DevisDetailDTO updated) {
+                DevisDetailEntity converted_DevisDetailEntity, updated_DevisDetailEntity = null;
+                try {
 
-    public DevisDetailDTO updateDevisDetail(Long id, DevisDetailDTO updated) {
-        DevisDetailEntity converted_DevisDetailEntity, updated_DevisDetailEntity = null;
-        try {
+                        DevisDetailDTO devisDetailDto = getDevisDetailById(id);
+                        converted_DevisDetailEntity = DevisDetailMapper.getInstance()
+                                        .convertToEntity(devisDetailDto.modifyValues(updated));
+                        // converted_ClientEntity.setDateModification(DateHelper.now());
+                        updated_DevisDetailEntity = devisDetailRepository.save(converted_DevisDetailEntity);
+                        updated = DevisDetailMapper.getInstance().convertToDto(updated_DevisDetailEntity);
 
-                DevisDetailDTO devisDetailDto = getDevisDetailById(id);
-            converted_DevisDetailEntity = DevisDetailMapper.getInstance()
-                    .convertToEntity(devisDetailDto.modifyValues(updated));
-            // converted_ClientEntity.setDateModification(DateHelper.now());
-            updated_DevisDetailEntity = devisDetailRepository.save(converted_DevisDetailEntity);
-            updated = DevisDetailMapper.getInstance().convertToDto(updated_DevisDetailEntity);
+                } catch (Exception e) {
+                        System.out.println("Erreur lors du ServiceDetail: " + e.getMessage());
+                        updated = null;
+                }
 
-        } catch (Exception e) {
-            System.out.println("Erreur lors du ServiceDetail: " + e.getMessage());
-            updated = null;
+                return updated;
         }
-
-        return updated;
-    }
 
 }
