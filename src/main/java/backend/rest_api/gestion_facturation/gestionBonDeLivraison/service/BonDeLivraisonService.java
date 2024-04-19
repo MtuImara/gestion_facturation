@@ -22,6 +22,7 @@ import backend.rest_api.gestion_facturation.gestionBonDeLivraison.mapper.BonDeLi
 import backend.rest_api.gestion_facturation.gestionBonDeLivraison.repository.BonDeLivraisonDetailRepository;
 import backend.rest_api.gestion_facturation.gestionBonDeLivraison.repository.BonDeLivraisonRepository;
 import backend.rest_api.gestion_facturation.gestionClient.mapper.ClientMapper;
+import backend.rest_api.gestion_facturation.gestionServices.mapper.ServiceDetailMapper;
 import backend.rest_api.gestion_facturation.gestionServices.mapper.ServiceMapper;
 import backend.rest_api.gestion_facturation.helpers.DateHelper;
 import backend.rest_api.gestion_facturation.helpers.PagingAndSortingHelper;
@@ -47,15 +48,17 @@ public class BonDeLivraisonService {
         BonDeLivraisonDetailDTO dto = new BonDeLivraisonDetailDTO();
 
         dto.setId(entity.getId());
-        if (entity.getService() != null) {
-            dto.setService(ServiceMapper.getInstance()
-                    .convertToDto(entity.getService()));
+        if (entity.getServiceDetail() != null) {
+            dto.setServiceDetail(ServiceDetailMapper.getInstance()
+                    .convertToDto(entity.getServiceDetail()));
         }
+        dto.setIdServiceDetail(entity.getIdServiceDetail());
+        dto.setIdBonDeLivraison(entity.getIdBonDeLivraison());
         dto.setDesignation(entity.getDesignation());
         dto.setQuantite(entity.getQuantite());
         dto.setPrixUnitHt(entity.getPrixUnitHt());
-
-        dto.setMontantHt(new BigDecimal(dto.getQuantite() * dto.getPrixUnitHt()));
+        dto.setTauxTva(entity.getTauxTva());
+        dto.setMontantHt(entity.getPrixTotal());
 
         return dto;
 
@@ -79,13 +82,14 @@ public class BonDeLivraisonService {
 
             BonDeLivraisonDTO dto = new BonDeLivraisonDTO();
 
-            StaticValue staticValStatut = new StaticValue();
-            StaticListOfValues listOfValuesStatut = new StaticListOfValues();
-            staticValStatut.setKey(
-                    listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey()
-                            .trim());
-            staticValStatut.setValue(
-                    listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getValue());
+            // StaticValue staticValStatut = new StaticValue();
+            // StaticListOfValues listOfValuesStatut = new StaticListOfValues();
+            // staticValStatut.setKey(
+            // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey()
+            // .trim());
+            // staticValStatut.setValue(
+            // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() -
+            // 1).getValue());
 
             dto.setId(entity.getId());
 
@@ -93,13 +97,18 @@ public class BonDeLivraisonService {
             dto.setReference(entity.getReference());
             dto.setDenominationClient(entity.getDenominationClient());
             dto.setCommentaire(entity.getCommentaire());
-            dto.setTypeStatut(staticValStatut);
+            dto.setEtat(entity.getEtat());
+            // if (staticValStatut != null) {
+            // dto.setTypeStatut(staticValStatut);
+            // }
             dto.setDateOperation(DateHelper.toText(entity.getDateOperation(), "time"));
+            dto.setDateEcheance(DateHelper.toText(entity.getDateEcheance(), "time"));
             dto.setDateCreation(DateHelper.toText(entity.getDateCreation(), "time"));
             dto.setDateModification(DateHelper.toText(entity.getDateModification(), "time"));
-            // if (entity.getClient() != null) {
-            // dto.setClient(ClientMapper.getInstance().convertToDto(entity.getClient()));
-            // }
+            if (entity.getClient() != null) {
+                dto.setClient(ClientMapper.getInstance().convertToDto(entity.getClient()));
+            }
+            dto.setIdClient(entity.getIdClient());
             if (entity.getBonDeLivraisonDetail() != null) {
                 dto.setBonDeLivraisonDetail(
                         entity.getBonDeLivraisonDetail().stream().map(this::bonDeLivraisonDetailConvertToDto)
@@ -107,28 +116,41 @@ public class BonDeLivraisonService {
             } else {
                 dto.setBonDeLivraisonDetail(null);
             }
+            if (entity.getService() != null) {
+                dto.setService(ServiceMapper.getInstance().convertToDto(entity.getService()));
+            }
+            dto.setId_service(entity.getIdService());
             if (entity.getClient().getAssujettiTva() == true) {
                 dto.setTauxTva(entity.getTauxTva());
             } else {
-                dto.setTauxTva(null);
+                dto.setTauxTva(0.0);
             }
-            if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
-                dto.setMontantTotalHT(new BigDecimal(0.0));
-                dto.setMontantTva(new BigDecimal(dto.getTauxTva() * bonDeLivraisonDetailRepository
-                        .montantTotalBonDeLivraisonHT(dto.getId())
-                        / 100));
-                dto.setMontantTotalTTC(
-                        new BigDecimal(bonDeLivraisonDetailRepository
-                                .montantTotalBonDeLivraisonHT(dto.getId())
-                                + ((dto.getTauxTva() * bonDeLivraisonDetailRepository
-                                        .montantTotalBonDeLivraisonHT(dto.getId()))
-                                        / 100)));
-            } else {
+            if (bonDeLivraisonDetailRepository.montantTotalBonDeLivraisonHT(dto.getId()) != null
+                    || bonDeLivraisonDetailRepository.montantTotalBonDeLivraisonHT(dto.getId()) == 0) {
                 dto.setMontantTotalHT(
                         new BigDecimal(bonDeLivraisonDetailRepository.montantTotalBonDeLivraisonHT(dto.getId())));
-                dto.setMontantTva(new BigDecimal(0.0));
-                dto.setMontantTotalTTC(new BigDecimal(0.0));
+            } else {
+                dto.setMontantTotalHT(new BigDecimal(0.0));
             }
+
+            // if (entity.getClient() != null && entity.getClient().getAssujettiTva() ==
+            // true) {
+            // dto.setMontantTotalHT(new BigDecimal(0.0));
+            // dto.setMontantTva(new BigDecimal(dto.getTauxTva() * factureDetailRepository
+            // .montantTotalFactureHT(dto.getId())
+            // / 100));
+            // dto.setMontantTotalTTC(
+            // new BigDecimal(factureDetailRepository
+            // .montantTotalFactureHT(dto.getId())
+            // + ((dto.getTauxTva() * factureDetailRepository
+            // .montantTotalFactureHT(dto.getId()))
+            // / 100)));
+            // } else {
+            // dto.setMontantTotalHT(
+            // new BigDecimal(factureDetailRepository.montantTotalFactureHT(dto.getId())));
+            // dto.setMontantTva(new BigDecimal(0.00));
+            // dto.setMontantTotalTTC(new BigDecimal(0.0));
+            // }
 
             dtos.add(dto);
 
@@ -151,13 +173,14 @@ public class BonDeLivraisonService {
 
             BonDeLivraisonDTO dto = new BonDeLivraisonDTO();
 
-            StaticValue staticValStatut = new StaticValue();
-            StaticListOfValues listOfValuesStatut = new StaticListOfValues();
-            staticValStatut.setKey(
-                    listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey()
-                            .trim());
-            staticValStatut.setValue(
-                    listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getValue());
+            // StaticValue staticValStatut = new StaticValue();
+            // StaticListOfValues listOfValuesStatut = new StaticListOfValues();
+            // staticValStatut.setKey(
+            // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() - 1).getKey()
+            // .trim());
+            // staticValStatut.setValue(
+            // listOfValuesStatut.getTypeStatut().get(entity.getTypeStatut() -
+            // 1).getValue());
 
             dto.setId(entity.getId());
 
@@ -165,13 +188,18 @@ public class BonDeLivraisonService {
             dto.setReference(entity.getReference());
             dto.setDenominationClient(entity.getDenominationClient());
             dto.setCommentaire(entity.getCommentaire());
-            dto.setTypeStatut(staticValStatut);
+            dto.setEtat(entity.getEtat());
+            // if (staticValStatut != null) {
+            // dto.setTypeStatut(staticValStatut);
+            // }
             dto.setDateOperation(DateHelper.toText(entity.getDateOperation(), "time"));
+            dto.setDateEcheance(DateHelper.toText(entity.getDateEcheance(), "time"));
             dto.setDateCreation(DateHelper.toText(entity.getDateCreation(), "time"));
             dto.setDateModification(DateHelper.toText(entity.getDateModification(), "time"));
             if (entity.getClient() != null) {
                 dto.setClient(ClientMapper.getInstance().convertToDto(entity.getClient()));
             }
+            dto.setIdClient(entity.getIdClient());
             if (entity.getBonDeLivraisonDetail() != null) {
                 dto.setBonDeLivraisonDetail(
                         entity.getBonDeLivraisonDetail().stream().map(this::bonDeLivraisonDetailConvertToDto)
@@ -179,30 +207,57 @@ public class BonDeLivraisonService {
             } else {
                 dto.setBonDeLivraisonDetail(null);
             }
+            if (entity.getService() != null) {
+                dto.setService(ServiceMapper.getInstance().convertToDto(entity.getService()));
+            }
+            dto.setId_service(entity.getIdService());
             if (entity.getClient().getAssujettiTva() == true) {
                 dto.setTauxTva(entity.getTauxTva());
             } else {
-                dto.setTauxTva(null);
+                dto.setTauxTva(0.0);
             }
-            if (entity.getClient() != null && entity.getClient().getAssujettiTva() == true) {
-                dto.setMontantTotalHT(new BigDecimal(0.0));
-                dto.setMontantTva(new BigDecimal(dto.getTauxTva() * bonDeLivraisonDetailRepository
-                        .montantTotalBonDeLivraisonHT(dto.getId())
-                        / 100));
-                dto.setMontantTotalTTC(
-                        new BigDecimal(bonDeLivraisonDetailRepository
-                                .montantTotalBonDeLivraisonHT(dto.getId())
-                                + ((dto.getTauxTva() * bonDeLivraisonDetailRepository
-                                        .montantTotalBonDeLivraisonHT(dto.getId()))
-                                        / 100)));
-            } else {
+            if (bonDeLivraisonDetailRepository.montantTotalBonDeLivraisonHT(dto.getId()) != null
+                    || bonDeLivraisonDetailRepository.montantTotalBonDeLivraisonHT(dto.getId()) == 0) {
                 dto.setMontantTotalHT(
                         new BigDecimal(bonDeLivraisonDetailRepository.montantTotalBonDeLivraisonHT(dto.getId())));
-                dto.setMontantTva(new BigDecimal(0.0));
-                dto.setMontantTotalTTC(new BigDecimal(0.0));
+            } else {
+                dto.setMontantTotalHT(new BigDecimal(0.0));
             }
+
+            // if (entity.getClient() != null && entity.getClient().getAssujettiTva() ==
+            // true) {
+            // dto.setMontantTotalHT(new BigDecimal(0.0));
+            // dto.setMontantTva(new BigDecimal(dto.getTauxTva() * factureDetailRepository
+            // .montantTotalFactureHT(dto.getId())
+            // / 100));
+            // dto.setMontantTotalTTC(
+            // new BigDecimal(factureDetailRepository
+            // .montantTotalFactureHT(dto.getId())
+            // + ((dto.getTauxTva() * factureDetailRepository
+            // .montantTotalFactureHT(dto.getId()))
+            // / 100)));
+            // } else {
+            // dto.setMontantTotalHT(
+            // new BigDecimal(factureDetailRepository.montantTotalFactureHT(dto.getId())));
+            // dto.setMontantTva(new BigDecimal(0.00));
+            // dto.setMontantTotalTTC(new BigDecimal(0.0));
+            // }
             return dto;
 
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public BonDeLivraisonDetailDTO getBonDeLivraisonDetailById(Long id) {
+
+        BonDeLivraisonDetailEntity bonDeLivraisonDetailEntity = null;
+        try {
+            bonDeLivraisonDetailEntity = bonDeLivraisonDetailRepository.getReferenceById(id);
+            BonDeLivraisonDetailDTO bonDeLivraisonDetailDto = BonDeLivraisonDetailMapper
+                    .getInstance().convertToDto(bonDeLivraisonDetailEntity);
+            return bonDeLivraisonDetailDto;
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
@@ -227,7 +282,7 @@ public class BonDeLivraisonService {
                 BonDeLivraisonDetailEntity detailEntity = BonDeLivraisonDetailMapper.getInstance()
                         .convertToEntity(service_detail);
 
-                detailEntity.setIdService(entity.getId());
+                detailEntity.setIdBonDeLivraison(entity.getId());
 
                 bonDeLivraisonDetailRepository.save(detailEntity);
             }
@@ -265,7 +320,7 @@ public class BonDeLivraisonService {
                 BonDeLivraisonDetailEntity rfd = BonDeLivraisonDetailMapper.getInstance()
                         .convertToEntity(service_detail);
 
-                rfd.setIdService(updated_Entity.getId());
+                rfd.setIdBonDeLivraison(updated_Entity.getId());
 
                 bonDeLivraisonDetailRepository.save(rfd);
             }
@@ -275,6 +330,88 @@ public class BonDeLivraisonService {
 
         } catch (Exception e) {
             System.out.println("Erreur lors de la modification: " + e.getMessage());
+            updated = null;
+        }
+
+        return updated;
+    }
+
+    // Ajout et Modification des données séparées
+
+    public BonDeLivraisonDTO ajouter(BonDeLivraisonDTO bonDeLivraisonDto) {
+
+        try {
+            BonDeLivraisonEntity bonDeLivraisonEntity = new BonDeLivraisonEntity();
+            bonDeLivraisonEntity = BonDeLivraisonMapper.getInstance()
+                    .convertToEntity(bonDeLivraisonDto);
+            bonDeLivraisonEntity.setDateCreation(DateHelper.now());
+            BonDeLivraisonEntity creationBonDeLivraison = bonDeLivraisonRepository.save(bonDeLivraisonEntity);
+
+            bonDeLivraisonDto = creationBonDeLivraison != null
+                    ? BonDeLivraisonMapper.getInstance().convertToDto(creationBonDeLivraison)
+                    : null;
+        } catch (Exception ex) {
+            bonDeLivraisonDto = null;
+            System.out.println("null" + ex.getMessage());
+        }
+
+        return bonDeLivraisonDto;
+    }
+
+    public BonDeLivraisonDetailDTO ajoutBonDeLivraisonDetailService(BonDeLivraisonDetailDTO bonDeLivraisonDetailDto) {
+
+        try {
+            BonDeLivraisonDetailEntity bonDeLivraisonDetailEntity = new BonDeLivraisonDetailEntity();
+            bonDeLivraisonDetailEntity = BonDeLivraisonDetailMapper.getInstance()
+                    .convertToEntity(bonDeLivraisonDetailDto);
+            // serviceDetailEntity.setDateCreation(DateHelper.now());
+            BonDeLivraisonDetailEntity creationBonDeLivraisonDetail = bonDeLivraisonDetailRepository
+                    .save(bonDeLivraisonDetailEntity);
+
+            bonDeLivraisonDetailDto = creationBonDeLivraisonDetail != null
+                    ? BonDeLivraisonDetailMapper.getInstance().convertToDto(creationBonDeLivraisonDetail)
+                    : null;
+        } catch (Exception ex) {
+            bonDeLivraisonDetailDto = null;
+            System.out.println("null" + ex.getMessage());
+        }
+
+        return bonDeLivraisonDetailDto;
+    }
+
+    public BonDeLivraisonDTO update(Long id, BonDeLivraisonDTO updated) {
+        BonDeLivraisonEntity converted_BonDeLivraisonEntity, updated_BonDeLivraisonEntity = null;
+        try {
+
+            BonDeLivraisonDTO bonDeLivraisonDto = getById(id);
+            converted_BonDeLivraisonEntity = BonDeLivraisonMapper.getInstance()
+                    .convertToEntity(bonDeLivraisonDto.modifyValues(updated));
+            // converted_FactureEntity.setDateModification(DateHelper.now());
+            updated_BonDeLivraisonEntity = bonDeLivraisonRepository.save(converted_BonDeLivraisonEntity);
+            updated = BonDeLivraisonMapper.getInstance().convertToDto(updated_BonDeLivraisonEntity);
+
+        } catch (Exception e) {
+            System.out.println("Erreur lors du BonDeLivraison: " + e.getMessage());
+            updated = null;
+        }
+
+        return updated;
+    }
+
+    public BonDeLivraisonDetailDTO updateBonDeLivraisonDetail(Long id, BonDeLivraisonDetailDTO updated) {
+        BonDeLivraisonDetailEntity converted_BonDeLivraisonDetailEntity, updated_BonDeLivraisonDetailEntity = null;
+        try {
+
+            BonDeLivraisonDetailDTO bonDeLivraisonDetailDto = getBonDeLivraisonDetailById(id);
+            converted_BonDeLivraisonDetailEntity = BonDeLivraisonDetailMapper.getInstance()
+                    .convertToEntity(bonDeLivraisonDetailDto.modifyValues(updated));
+            // converted_ClientEntity.setDateModification(DateHelper.now());
+            updated_BonDeLivraisonDetailEntity = bonDeLivraisonDetailRepository
+                    .save(converted_BonDeLivraisonDetailEntity);
+            updated = BonDeLivraisonDetailMapper.getInstance().convertToDto(updated_BonDeLivraisonDetailEntity);
+
+        } catch (Exception e) {
+            System.out.println("Erreur lors du ServiceDetail: " + e.getMessage());
             updated = null;
         }
 

@@ -20,8 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import backend.rest_api.gestion_facturation.constantes.StaticValue;
 import backend.rest_api.gestion_facturation.gestionBonDeLivraison.dto.BonDeLivraisonDTO;
+import backend.rest_api.gestion_facturation.gestionBonDeLivraison.dto.BonDeLivraisonDetailDTO;
+import backend.rest_api.gestion_facturation.gestionBonDeLivraison.entity.BonDeLivraisonDetailEntity;
 import backend.rest_api.gestion_facturation.gestionBonDeLivraison.entity.BonDeLivraisonEntity;
+import backend.rest_api.gestion_facturation.gestionBonDeLivraison.mapper.BonDeLivraisonDetailMapper;
 import backend.rest_api.gestion_facturation.gestionBonDeLivraison.mapper.BonDeLivraisonMapper;
+import backend.rest_api.gestion_facturation.gestionBonDeLivraison.repository.BonDeLivraisonDetailRepository;
 import backend.rest_api.gestion_facturation.gestionBonDeLivraison.repository.BonDeLivraisonRepository;
 import backend.rest_api.gestion_facturation.gestionBonDeLivraison.service.BonDeLivraisonService;
 import backend.rest_api.gestion_facturation.helpers.MessageHelper;
@@ -39,6 +43,7 @@ public class BonDeLivraisonController {
 
     private final BonDeLivraisonService bonDeLivraisonService;
     private final BonDeLivraisonRepository bonDeLivraisonRepository;
+    private final BonDeLivraisonDetailRepository bonDeLivraisonDetailRepository;
 
     @GetMapping(value = "/type_de_statut_de_bon_de_livraison")
     public ResponseEntity<?> getTypeStatut() {
@@ -93,7 +98,7 @@ public class BonDeLivraisonController {
                     HttpStatus.BAD_REQUEST);
         } else {
             BonDeLivraisonDTO dtos = bonDeLivraisonService
-                    .ajoutBonDeLivraisonService(bonDeLivraisonDto);
+                    .ajouter(bonDeLivraisonDto);
             return new ResponseEntity<>(
                     new ResponseHelper(MessageHelper.createdSuccessfully(), dtos, true),
                     HttpStatus.CREATED);
@@ -117,7 +122,7 @@ public class BonDeLivraisonController {
                         new ResponseHelper(("code " + bonDeLivraisonDto.getCode() + " exist"), true),
                         HttpStatus.BAD_REQUEST);
             } else {
-                BonDeLivraisonDTO bonDeLivraisonDto2 = bonDeLivraisonService.modificationBonDeLivraisonService(id,
+                BonDeLivraisonDTO bonDeLivraisonDto2 = bonDeLivraisonService.update(id,
                         bonDeLivraisonDto);
 
                 return new ResponseEntity<>(
@@ -151,6 +156,83 @@ public class BonDeLivraisonController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    @PostMapping(value = "/ajout_detail")
+    public ResponseEntity<?> ajouterBonDeLivraisonDetailController(@RequestBody BonDeLivraisonDetailDTO dto) {
+
+        BonDeLivraisonDetailEntity entity = BonDeLivraisonDetailMapper.getInstance()
+                .convertToEntity(dto);
+
+        // if (serviceRepository.existsByCode(entity.getCode())) {
+        // return new ResponseEntity<>(
+        // new ResponseHelper(MessageHelper.dataExist("code"), false),
+        // HttpStatus.BAD_REQUEST);
+        // } else {
+        BonDeLivraisonDetailDTO bonDeLivraisonDetail = bonDeLivraisonService
+                .ajoutBonDeLivraisonDetailService(dto);
+        return new ResponseEntity<>(
+                new ResponseHelper(MessageHelper.createdSuccessfully(), bonDeLivraisonDetail, true),
+                HttpStatus.CREATED);
+        // }
+    }
+
+    @PutMapping(value = "/modefier_detail/{id}")
+    public ResponseEntity<?> modifierBonDeLivraisonDetailController(@PathVariable(name = "id", required = true) Long id,
+            @RequestBody BonDeLivraisonDetailDTO dto) {
+
+        // Optional<ServiceEntity> serviceIdOptional = serviceRepository.findById(id);
+
+        // Optional<ServiceEntity> codeExist = serviceRepository.verificationCode(id,
+        // dto.getCode());
+
+        // if (serviceIdOptional.isPresent()) {
+
+        // if (codeExist.isPresent()) {
+        // return new ResponseEntity<>(
+        // new ResponseHelper(("code " + dto.getCode() + " exist"), false),
+        // HttpStatus.BAD_REQUEST);
+        // } else {
+        BonDeLivraisonDetailDTO bonDeLivraisonDto = bonDeLivraisonService.updateBonDeLivraisonDetail(id,
+                dto);
+
+        return new ResponseEntity<>(
+                new ResponseHelper(MessageHelper.updatedSuccessfully("Detail Bon De Livraison"),
+                        bonDeLivraisonDto,
+                        true),
+                HttpStatus.OK);
+        // }
+
+        // } else {
+        // return new ResponseEntity<>(
+        // new ResponseHelper(MessageHelper.notFound("id: " + id), false),
+        // HttpStatus.NOT_FOUND);
+        // }
+    }
+
+    @RequestMapping(value = "/delete_detail/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> supprimerBonDeLivraisonDetailController(@PathVariable("id") Long id) {
+        Optional<BonDeLivraisonDetailEntity> idOptional = bonDeLivraisonDetailRepository.findById(id);
+
+        try {
+            if (idOptional.isPresent()) {
+                bonDeLivraisonDetailRepository.deleteById(id);
+                return new ResponseEntity<>(new ResponseHelper(MessageHelper.success(), true), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ResponseHelper(
+                        MessageHelper.notFound("ID"), false), HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseHelper(MessageHelper
+                    .internalServer(), false),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public long countRecords() {
+        return bonDeLivraisonRepository.count();
     }
 
 }

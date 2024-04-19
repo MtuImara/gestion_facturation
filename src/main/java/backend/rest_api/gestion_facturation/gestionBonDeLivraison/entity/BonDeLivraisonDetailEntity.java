@@ -1,10 +1,11 @@
 package backend.rest_api.gestion_facturation.gestionBonDeLivraison.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import backend.rest_api.gestion_facturation.gestionServices.entity.ServiceEntity;
+import backend.rest_api.gestion_facturation.gestionServices.entity.ServiceDetailEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,13 +35,13 @@ public class BonDeLivraisonDetailEntity implements Serializable {
     @Column(name = "id", length = 11)
     private Long id;
 
-    @Column(name = "id_service", nullable = true)
-    private Long idService;
+    @Column(name = "id_service_detail", nullable = true)
+    private Long idServiceDetail;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    @JoinColumn(name = "id_service", referencedColumnName = "id", insertable = false, updatable = false, nullable = false)
-    private ServiceEntity service;
+    @JoinColumn(name = "id_service_detail", referencedColumnName = "id", insertable = false, updatable = false, nullable = false)
+    private ServiceDetailEntity serviceDetail;
 
     @Column(name = "designation")
     private String designation;
@@ -48,8 +49,14 @@ public class BonDeLivraisonDetailEntity implements Serializable {
     @Column(name = "quantite")
     private Double quantite;
 
+    @Column(name = "taux_tva")
+    private Double tauxTva;
+
     @Column(name = "prix_unit_ht")
     private Double prixUnitHt;
+
+    @Column(name = "prix_total")
+    private BigDecimal prixTotal;
 
     @Column(name = "id_bon_de_livraison", nullable = true)
     private Long idBonDeLivraison;
