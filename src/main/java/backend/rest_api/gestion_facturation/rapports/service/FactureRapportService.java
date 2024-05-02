@@ -2,6 +2,7 @@ package backend.rest_api.gestion_facturation.rapports.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -84,6 +85,67 @@ public class FactureRapportService {
                                 // hashMap1.put("commentaire", saisieInventaireEntity.getCommentaire());
                                 // hashMap1.put("dateOperation", saisieInventaireEntity.getDateOperation());
                                 // hashMap1.put("dateEcheance", saisieInventaireEntity.getDateEcheance());
+
+                                hashMap1.put("factureDetail", getlistesDetailFacture(saisieInventaireDetail));
+
+                                maps.add(hashMap1);
+                        }
+                }
+
+                hashMap.put("rapportFacture", maps);
+
+                return hashMap;
+        }
+
+        public LinkedHashMap<String, Object> getEtatFactureByDateOperationService(Date dateOperation) {
+
+                LinkedHashMap<String, Object> hashMap = new LinkedHashMap<>();
+
+                List<FactureEntity> saisieInventaire = factureRepository
+                                .getAllByDateOperation(dateOperation);
+
+                List<LinkedHashMap<String, Object>> maps = null;
+                maps = new ArrayList<>();
+
+                for (FactureEntity saisieInventaireEntity : saisieInventaire) {
+
+                        LinkedHashMap<String, Object> hashMap1 = new LinkedHashMap<>();
+
+                        List<FactureDetailEntity> saisieInventaireDetail = factureDetailRepository
+                                        .getByFacture(saisieInventaireEntity.getId());
+
+                        if (saisieInventaireDetail.size() > 0) {
+
+                                hashMap1.put("factureDetail", getlistesDetailFacture(saisieInventaireDetail));
+
+                                maps.add(hashMap1);
+                        }
+                }
+
+                hashMap.put("rapportFacture", maps);
+
+                return hashMap;
+        }
+
+        public LinkedHashMap<String, Object> getEtatFactureEntreDateOperationService(Date dateOperationDebut,
+                        Date dateOperationFin) {
+
+                LinkedHashMap<String, Object> hashMap = new LinkedHashMap<>();
+
+                List<FactureEntity> saisieInventaire = factureRepository
+                                .getAllByEntreDateOperation(dateOperationDebut, dateOperationFin);
+
+                List<LinkedHashMap<String, Object>> maps = null;
+                maps = new ArrayList<>();
+
+                for (FactureEntity saisieInventaireEntity : saisieInventaire) {
+
+                        LinkedHashMap<String, Object> hashMap1 = new LinkedHashMap<>();
+
+                        List<FactureDetailEntity> saisieInventaireDetail = factureDetailRepository
+                                        .getByFacture(saisieInventaireEntity.getId());
+
+                        if (saisieInventaireDetail.size() > 0) {
 
                                 hashMap1.put("factureDetail", getlistesDetailFacture(saisieInventaireDetail));
 

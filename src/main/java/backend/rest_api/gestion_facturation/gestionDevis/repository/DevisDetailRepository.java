@@ -1,5 +1,6 @@
 package backend.rest_api.gestion_facturation.gestionDevis.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,5 +27,8 @@ public interface DevisDetailRepository extends JpaRepository<DevisDetailEntity, 
 
     @Query(value = "SELECT COALESCE(SUM(a.prix_total), 0) FROM gestion_facturation.tbl_detail_devis a WHERE a.id_devis=?1", nativeQuery = true)
     Double montantTotalDevisHT(@Param("id_devis") Long id_devis);
+
+    @Query("SELECT U FROM DevisDetailEntity U WHERE U.idDevis=:idDevis")
+    List<DevisDetailEntity> getByDevis(@Param("idDevis") Long idDevis);
 
 }
