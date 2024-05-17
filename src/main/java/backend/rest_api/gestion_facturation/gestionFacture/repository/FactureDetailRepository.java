@@ -12,7 +12,7 @@ import backend.rest_api.gestion_facturation.gestionFacture.entity.FactureDetailE
 @Repository
 public interface FactureDetailRepository extends JpaRepository<FactureDetailEntity, Long> {
 
-    @Query(value = "SELECT COALESCE(SUM(a.prix_total), 0) FROM gestion_facturation.tbl_facture_detail a WHERE a.id_facture=?1", nativeQuery = true)
+    @Query(value = "SELECT COALESCE(SUM(a.prix_total), 0) FROM tbl_facture_detail a WHERE a.id_facture=?1", nativeQuery = true)
     Double montantTotalFactureHT(@Param("id_facture") Long id_facture);
 
     @Query("SELECT U FROM FactureDetailEntity U WHERE U.idFacture=:idFacture")

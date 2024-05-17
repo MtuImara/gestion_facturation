@@ -21,11 +21,11 @@ public interface DevisDetailRepository extends JpaRepository<DevisDetailEntity, 
     // @Param("code") String code);
 
     // @Query(value = "SELECT COALESCE(SUM(a.quantite * a.prix_unit_ht), 0) FROM
-    // gestion_facturation.tbl_detail_devis a WHERE a.id_devis=?1", nativeQuery =
+    // tbl_detail_devis a WHERE a.id_devis=?1", nativeQuery =
     // true)
     // Double montantTotalDevisHT(@Param("id_devis") Long id_devis);
 
-    @Query(value = "SELECT COALESCE(SUM(a.prix_total), 0) FROM gestion_facturation.tbl_detail_devis a WHERE a.id_devis=?1", nativeQuery = true)
+    @Query(value = "SELECT COALESCE(SUM(a.prix_total), 0) FROM tbl_detail_devis a WHERE a.id_devis=?1", nativeQuery = true)
     Double montantTotalDevisHT(@Param("id_devis") Long id_devis);
 
     @Query("SELECT U FROM DevisDetailEntity U WHERE U.idDevis=:idDevis")

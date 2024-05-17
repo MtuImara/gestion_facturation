@@ -19,7 +19,7 @@ public interface BonDeLivraisonDetailRepository extends JpaRepository<BonDeLivra
     // Double montantTotalBonDeLivraisonHT(@Param("id_bon_de_livraison") Long
     // id_bon_de_livraison);
 
-    @Query(value = "SELECT COALESCE(SUM(a.prix_total), 0) FROM gestion_facturation.tbl_bon_de_livraison_detail a WHERE a.id_bon_de_livraison=?1", nativeQuery = true)
+    @Query(value = "SELECT COALESCE(SUM(a.prix_total), 0) FROM tbl_bon_de_livraison_detail a WHERE a.id_bon_de_livraison=?1", nativeQuery = true)
     Double montantTotalBonDeLivraisonHT(@Param("id_bon_de_livraison") Long id_bon_de_livraison);
 
     @Query("SELECT U FROM BonDeLivraisonDetailEntity U WHERE U.idBonDeLivraison=:idBonDeLivraison")
