@@ -34,7 +34,7 @@ public class FactureMapper {
 
         entity.setId(dto.getId());
         entity.setCode(dto.getCode());
-        entity.setReference(dto.getReference());
+        // entity.setReference(dto.getReference());
         entity.setDenominationClient(dto.getDenominationClient());
         entity.setCommentaire(dto.getCommentaire());
         entity.setEtat(dto.getEtat());
